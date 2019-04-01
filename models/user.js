@@ -9,8 +9,7 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, trim: true, unique: true },
     gdprApproval: { type: Boolean, default: false },
     dateCreated: { type: Date, required: false },
-    name: { type: String, trim: true },
-    surname: { type: String, trim: true },
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
     verifyEmailToken: [{ type: String }],
     verifyEmails: [{ email: { type: String }, token: { type: String } }],
     jwt: { type: String },
@@ -20,7 +19,7 @@ const UserSchema = new mongoose.Schema(
   options
 )
 
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function (next) {
   const user = this
 
   if (user.isModified('password')) {
