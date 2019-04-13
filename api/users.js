@@ -24,7 +24,7 @@ const verifyUserEmail = (params) => {
     text:
       `Hello ${params.name} ${params.surname}, \n\n` +
       `Please verify your email by following the link below: \n\n` +
-      `https://${params.url}/auth/verify/${params.token} \n\n` +
+      `https://${params.url}/auth/verify/${params.email} \n\n` +
       `If you didn't request to add your email to BeerJournal, please ignore this email and nothing will happen! \n\n` +
       `Best regards, \n\n` +
       `BeerJournal`
@@ -36,50 +36,16 @@ const verifyUserEmail = (params) => {
   return { status: 200 }
 }
 
-// Verify email
-router.post('/verifyEmail', async (req, res) => {
-  const id = req.body.id
-  const email = req.body.email
-  const token = crypto.randomBytes(20).toString('hex')
-
-  const user = await User.findByIdAndUpdate(
-    id,
-    {
-      $push: { verifyEmails: { email, token }, verifyEmailToken: token }
-    },
-    { new: true }
-  )
-  if (!user) return res.status(404).send()
-
-  const info = await verifyUserEmail({
-    url: req.headers.host,
-    name: user.name,
-    surname: user.surname,
-    email,
-    token
-  })
-  if (info.err) return res.status(info.err).send()
-
-  res.status(200).send()
-})
-
 // Add verified email to user profile
 router.patch('/addVerifiedEmail', async (req, res) => {
-  const token = req.body.token
-
   try {
-    const user = await User.findOne({ verifyEmailToken: token })
+    const email = req.body.email
+    const user = await User.findOneAndUpdate(
+      { verifyEmail: email },
+      { $set: { email: email, verifyEmail: undefined } },
+      { new: true }
+    )
     if (!user) return res.status(404).send()
-
-    const myObject = user.verifyEmails.find(x => x.token === token)
-    // user.email.push(myObject.email)
-    user.email = myObject.email
-    user.verifyEmails.splice(user.verifyEmails.indexOf(myObject), 1)
-    user.verifyEmailToken.splice(user.verifyEmailToken.indexOf(token), 1)
-
-    await user.save((err) => {
-      if (err) return res.status(400).send(err)
-    })
 
     res.status(200).send()
   } catch (err) {
@@ -108,88 +74,82 @@ router.patch('/changePassword', async (req, res) => {
 })
 
 // Forgot password email to reset
-router.post('/forgot', async (req, res) => {
-  const email = req.body.email
-  const token = await crypto.randomBytes(20).toString('hex')
+router.patch('/forgot', async (req, res) => {
+  try {
+    const email = req.body.email
+    const resetPasswordToken = await crypto.randomBytes(20).toString('hex')
+    const resetPasswordExpires = Date.now() + 3600000
 
-  const user = await User.findOne({ email: email })
-  if (!user) return res.status(404).send()
+    const user = await User.findOneAndUpdate(
+      { email }, { $set: { resetPasswordToken, resetPasswordExpires } }, { new: true }
+    )
+    if (!user) return res.status(404).send()
 
-  user.resetPasswordToken = token
-  user.resetPasswordExpires = Date.now() + 3600000
+    const mailOptions = {
+      to: email,
+      from: 'Password Reset <no-reply@agileteams.io>',
+      subject: 'BeerJournal Password Reset',
+      text:
+        `Hello ${user.name}, \n\n` +
+        'You are receiving this email because you have requested to reset your BeerJournal password.\n\n' +
+        'Please click on the following link, or paste it into your browser to complete the process:\n\n' +
+        `https://${req.headers.host}/auth/reset/${resetPasswordToken} \n\n` +
+        'If you did not request this, please ignore this email and your password will remain unchanged.\n\n' +
+        'Best regards, \n\n' +
+        'BeerJournal'
+    }
+    smtpTransport.sendMail(mailOptions, (err) => {
+      if (err) return res.status(412).send(err)
+    })
 
-  await user.save((err) => {
-    if (err) return res.status(400).send()
-  })
-
-  const mailOptions = {
-    to: email,
-    from: 'Password Reset <no-reply@agileteams.io>',
-    subject: 'BeerJournal Password Reset',
-    text:
-      `Hello ${user.name}, \n\n` +
-      'You are receiving this email because you have requested to reset your BeerJournal password.\n\n' +
-      'Please click on the following link, or paste it into your browser to complete the process:\n\n' +
-      `https://${req.headers.host}/auth/reset/${token} \n\n` +
-      'If you did not request this, please ignore this email and your password will remain unchanged.\n\n' +
-      'Best regards, \n\n' +
-      'BeerJournal'
+    res.status(200).send()
+  } catch (err) {
+    return res.status(400).send(err)
   }
-  smtpTransport.sendMail(mailOptions, (err) => {
-    if (err) return res.status(412).send(err)
-  })
-
-  res.status(200).send()
 })
 
 // Reset forgotten password
-router.post('/reset/:token', async (req, res) => {
-  const user = await User.findOne({
-    resetPasswordToken: req.params.token,
-    resetPasswordExpires: { $gt: Date.now() }
-  })
-  if (!user) return res.status(404).send()
-
-  user.password = req.body.password
-  user.resetPasswordToken = undefined
-  user.resetPasswordExpires = undefined
-
-  await user.save((err) => {
-    if (err) return res.status(400).send(err)
-  })
-
-  res.status(200).send()
-})
-
-// Check DB for email
-router.get('/checkEmail/:email', async (req, res) => {
-  const user = await User.findOne({ email: req.params.email })
-  if (!user) return res.status(200).send({ emailUnique: true })
-  return res.status(200).send({ emailUnique: false })
-})
-
-// Create new user
-router.post('/:email', async (req, res) => {
+router.patch('/reset/:token', async (req, res) => {
   try {
-    const token = await crypto.randomBytes(20).toString('hex')
-    const email = req.params.email
-    const user = await new User(req.body)
+    const password = req.body.password
+    const user = await User.findOne(
+      {
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { $gt: Date.now() }
+      }
+    )
+    if (!user) return res.status(404).send()
 
-    user.dateCreated = new Date()
-    user.verifyEmails.push({ email, token })
-    user.verifyEmailToken.push(token)
+    user.password = password
+    user.resetPasswordToken = undefined
+    user.resetPasswordExpires = undefined
 
     await user.save((err) => {
       if (err) return res.status(400).send(err)
     })
 
-    const info = await verifyUserEmail({
-      url: req.headers.host,
-      name: user.name,
-      surname: user.surname,
-      email,
-      token
-    })
+    res.status(200).send()
+  } catch (err) {
+    return res.status(400).send(err)
+  }
+})
+
+// Create new user
+router.post('/newUser', async (req, res) => {
+  try {
+    const email = req.body.email
+    const name = req.body.name
+    const surname = req.body.surname
+    const password = req.body.password
+    const gdprApproval = req.body.gdprApproval
+    const url = req.headers.host
+
+    const checkUserEmail = await User.findOne({ email })
+    if (checkUserEmail) return res.status(404).send()
+
+    await new User({ name, surname, verifyEmail: email, password, gdprApproval }).save()
+
+    const info = await verifyUserEmail({ url, name, surname, email })
     if (info.err) return res.status(info.err).send()
 
     res.status(200).send()
@@ -201,7 +161,9 @@ router.post('/:email', async (req, res) => {
 // Retrieve user
 router.get('/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate('beers')
+    const user = await User.findById(req.params.id)
+      .select('_id name surname email')
+      .populate('reviews')
     if (!user) return res.status(404).send()
 
     res.status(200).send(user)
@@ -213,14 +175,25 @@ router.get('/:id', async (req, res) => {
 // Update user
 router.patch('/:id', async (req, res) => {
   try {
+    const email = req.body.newEmail
+    const name = req.body.name
+    const surname = req.body.surname
+    const body = { name, surname }
+
+    if (email) {
+      body.verifyEmail = email
+      const checkUserEmail = await User.findOne({ email })
+      if (checkUserEmail) return res.status(404).send()
+
+      const info = await verifyUserEmail({ url: req.headers.host, name, surname, email })
+      if (info.err) return res.status(info.err).send()
+    }
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
-      {
-        new: true,
-        select: '-password -verifyEmailToken -dateCreated -__v -jwt -gdprApproval'
-      }
-    ).populate('beers')
+      { $set: body },
+      { new: true, select: '_id name surname email' }
+    )
     if (!user) return res.status(404).send()
 
     res.status(200).send(user)

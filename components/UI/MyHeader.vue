@@ -1,14 +1,44 @@
 <template>
   <div>
     <my-spinner :loading="loading" />
-    <v-toolbar height="80">
-      <v-spacer></v-spacer>
-      <v-btn
-        v-if="isAuth"
-        flat
-        @click.native="onLogout"
-      >Logout</v-btn>
-      <my-auth v-else />
+    <v-toolbar height="180">
+      <v-container>
+        <v-layout justify-end>
+          <my-auth v-if="!isAdmin" />
+        </v-layout>
+        <v-layout
+          align-center
+          wrap
+        >
+          <h1 class="mr-2"><span style="color:#FFA000">Beer</span>Journal</h1>
+          <v-icon large>fa fa-beer</v-icon>
+          <v-spacer></v-spacer>
+          <div v-if="isAdmin">
+            <v-menu offset-y>
+              <template v-slot:activator="{ on }">
+                <v-avatar
+                  tile
+                  color="secondary"
+                  v-on="on"
+                >
+                  <v-icon large>fa fa-user-astronaut</v-icon>
+                </v-avatar>
+              </template>
+              <v-list>
+                <v-list-tile @click.native="$store.commit('toggleEditProfile')">
+                  <v-list-tile-title>Profile</v-list-tile-title>
+                </v-list-tile>
+                <v-list-tile @click.native="$store.commit('toggleChangePassword')">
+                  <v-list-tile-title>Change Password</v-list-tile-title>
+                </v-list-tile>
+                <v-list-tile @click.native="onLogout">
+                  <v-list-tile-title>Logout</v-list-tile-title>
+                </v-list-tile>
+              </v-list>
+            </v-menu>
+          </div>
+        </v-layout>
+      </v-container>
     </v-toolbar>
   </div>
 </template>
@@ -27,8 +57,11 @@ export default {
     }
   },
   computed: {
-    isAuth() {
+    isAdmin() {
       return this.$store.state.auth.loggedIn
+    },
+    user() {
+      return this.$store.state.auth.user
     }
   },
   methods: {
@@ -49,4 +82,9 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped></style>
+<style lang="stylus" scoped>
+h1 {
+  font-weight: lighter;
+  font-size: 2.5rem;
+}
+</style>

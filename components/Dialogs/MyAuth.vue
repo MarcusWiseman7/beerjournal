@@ -7,7 +7,10 @@
       persistent
     >
       <template v-slot:activator="{ on }">
-        <v-btn v-on="on">Login/Sign up</v-btn>
+        <v-btn
+          color="accent"
+          v-on="on"
+        >Login/Sign up</v-btn>
       </template>
       <v-card>
         <v-card-title>
@@ -15,12 +18,25 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="form">
+            <div v-if="signup">
+              <v-text-field
+                v-model="name"
+                :rules="[rules.required, rules.max]"
+                label="Name"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model="surname"
+                :rules="[rules.required, rules.max]"
+                label="Surname"
+                required
+              ></v-text-field>
+            </div>
             <v-text-field
               v-model="email"
               :rules="[rules.required, rules.email, rules.max]"
               label="Email"
               required
-              autofocus
             ></v-text-field>
             <v-text-field
               v-if="!forgotPassword"
@@ -37,7 +53,7 @@
               <v-text-field
                 v-model="verifyPassword"
                 :append-icon="show1 ? 'visibility' : 'visibility_off'"
-                :rules="[rules.required, rules.sameAs]"
+                :rules="[rules.required, sameAs]"
                 :type="show1 ? 'text' : 'password'"
                 label="Confirm Password"
                 required
@@ -69,7 +85,6 @@
           <v-btn
             flat
             large
-            color="primary"
             @click.native="onCancel"
           >
             Cancel
@@ -77,6 +92,7 @@
           <v-btn
             flat
             large
+            color="primary"
             @click.native="onSubmit"
           >
             Submit
@@ -138,6 +154,8 @@ export default {
       loading: false,
       signup: false,
       forgetPassword: false,
+      name: '',
+      surname: '',
       email: '',
       password: '',
       verifyPassword: '',
@@ -147,21 +165,7 @@ export default {
       show1: false,
       recaptchaSitekey: '6Lf-4JAUAAAAAIQ9N55FIgiuqmohKbBZkz8rzOZp',
       recaptchaVerified: false,
-      rules: {
-        required: v => !!v || 'This is required',
-        min: v => (v && v.length >= 6) || 'Min 6 characters',
-        max: v => (v && v.length <= 75) || 'Max 75 characters',
-        sameAs: v => v === this.password || 'Must match password',
-        email: (v) => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(v) || 'Invalid email'
-        },
-        async isUnique(email) {
-          if (email === '') return true
-          const response = await this.$axios.get(`/users/checkEmail/${email}`)
-          return (Boolean(await response.data.user) || 'This email is already registered')
-        }
-      }
+      sameAs: v => v === this.password || 'Must match password'
     }
   },
   computed: {
@@ -171,7 +175,8 @@ export default {
         : this.signup === true
           ? 'Sign Up'
           : 'Log In'
-    }
+    },
+    rules() { return this.$store.state.rules }
   },
   methods: {
     onSubmit() {
@@ -193,12 +198,15 @@ export default {
               this.$toast.error('Error logging in, please try again', { duration: 4000 })
             })
         } else if (this.signup) {
-          this.$axios.post(`/users/${this.email}`, {
+          this.$axios.post('/users/newUser', {
+            name: this.name,
+            surname: this.surname,
+            email: this.email,
             password: this.password,
             gdprApproval: this.gdprApproval
           })
             .then(() => {
-              this.$router.push('/')
+              this.onCancel()
               this.loading = false
               this.$toast.success('Success signing up, check your email for validation', { duration: 5000 })
             })
@@ -211,6 +219,7 @@ export default {
             email: this.email
           })
             .then(() => {
+              this.onCancel()
               this.loading = false
               this.$toast.success('Check your email for instructions', { duration: 5000 })
             })
@@ -225,6 +234,16 @@ export default {
       this.dialog = false
       this.signup = false
       this.forgotPassword = false
+      this.name = ''
+      this.surname = ''
+      this.email = ''
+      this.password = ''
+      this.verifyPassword = ''
+      this.forgotPassword = ''
+      this.gdprApproval = false
+      this.show = false
+      this.show1 = false
+      this.recaptchaVerified = false
     },
     toggleType(type) {
       this.forgotPassword = type === 'forgotPassword'

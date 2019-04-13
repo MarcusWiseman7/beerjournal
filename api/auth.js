@@ -24,7 +24,7 @@ router.post('/login', async (req, res) => {
     })
 
     user.jwt = token
-    await user.save(err => {
+    await user.save((err) => {
       if (err) return res.status(400).send(err)
     })
 
@@ -53,8 +53,8 @@ router.get('/user', async (req, res) => {
   try {
     const user = await User.findOne(
       { jwt: req.headers.authorization.substring(7) },
-      '-password -verifyEmailToken -dateCreated -__v -jwt -gdprApproval'
-    ).populate('beers')
+      '_id name surname email'
+    )
 
     if (!user) return res.status(404).send()
 
