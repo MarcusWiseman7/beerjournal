@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const express = require('express')
 
 // eslint-disable-next-line no-unused-vars
@@ -9,7 +10,9 @@ const router = express.Router()
 // Create new beer
 router.post('/', async (req, res) => {
   try {
-    await new Beer(req.body)
+    await new Beer(req.body).save((err) => {
+      if (err) return res.status(400).send(err)
+    })
 
     res.status(200).send()
   } catch (err) {
@@ -17,8 +20,20 @@ router.post('/', async (req, res) => {
   }
 })
 
+// Retrieve all beers
+router.get('/', async (req, res) => {
+  try {
+    const beers = await Beer.find()
+    if (!beers) return res.status(404).send()
+
+    res.status(200).send(beers)
+  } catch (err) {
+    return res.status(400).send(err)
+  }
+})
+
 // Retrieve beer
-router.post('/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const beer = await Beer.findById(req.params.id)
     if (!beer) return res.status(404).send()
@@ -30,7 +45,7 @@ router.post('/:id', async (req, res) => {
 })
 
 // Update beer
-router.post('/:id', async (req, res) => {
+router.patch('/:id', async (req, res) => {
   try {
     const beer = await Beer.findByIdAndUpdate(
       req.params.id, { $set: req.body }, { new: true }

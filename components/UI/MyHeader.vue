@@ -21,7 +21,7 @@
                   color="secondary"
                   v-on="on"
                 >
-                  <v-icon large>fa fa-user-astronaut</v-icon>
+                  <v-icon large>{{ user.userIcon }}</v-icon>
                 </v-avatar>
               </template>
               <v-list>

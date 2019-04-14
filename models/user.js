@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     surname: { type: String, required: true, trim: true },
+    userIcon: { type: String, default: 'fa fa-user-astronaut' },
     password: { type: String, required: true, trim: true },
     email: { type: String, trim: true, unique: true },
     gdprApproval: { type: Boolean, default: false },

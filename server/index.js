@@ -8,6 +8,8 @@ const cookieParser = require('cookie-parser')
 
 const auth = require('../api/auth')
 const users = require('../api/users')
+const beers = require('../api/beers')
+const reviews = require('../api/reviews')
 
 const app = express()
 
@@ -40,6 +42,8 @@ async function start() {
   // Api routes
   app.use('/auth', auth)
   app.use('/users', users)
+  app.use('/beers', beers)
+  app.use('/reviews', reviews)
 
   // Give nuxt middleware to express
   app.use(nuxt.render)

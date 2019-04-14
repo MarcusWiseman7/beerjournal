@@ -10,6 +10,25 @@
           ref="form"
           lazy-validation
         >
+          <v-select
+            append-icon="arrow_drop_down"
+            v-model="user.userIcon"
+            :items="userIcons"
+            label="User Icon"
+          >
+            <template
+              slot="selection"
+              slot-scope="{ item, parent, selected }"
+            >
+              <v-icon :selected="selected">{{ item }}</v-icon>
+            </template>
+            <template
+              slot="item"
+              slot-scope="{ index, item }"
+            >
+              <v-icon>{{ item }}</v-icon>
+            </template>
+          </v-select>
           <v-text-field
             v-model="user.name"
             :rules="[rules.required, rules.max]"
@@ -53,13 +72,16 @@
 </template>
 
 <script>
+import userIcons from '~/data/userIcons.json'
+
 export default {
   name: 'EditProfile',
   data() {
     return {
       loading: false,
       replaceEmail: false,
-      user: {}
+      user: {},
+      userIcons
     }
   },
   computed: {

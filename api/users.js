@@ -147,7 +147,10 @@ router.post('/newUser', async (req, res) => {
     const checkUserEmail = await User.findOne({ email })
     if (checkUserEmail) return res.status(404).send()
 
-    await new User({ name, surname, verifyEmail: email, password, gdprApproval }).save()
+    await new User({ name, surname, verifyEmail: email, password, gdprApproval })
+      .save((err) => {
+        if (err) return res.status(400).send(err)
+      })
 
     const info = await verifyUserEmail({ url, name, surname, email })
     if (info.err) return res.status(info.err).send()
@@ -162,7 +165,7 @@ router.post('/newUser', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
-      .select('_id name surname email')
+      .select('_id name surname email userIcon')
       .populate('reviews')
     if (!user) return res.status(404).send()
 
@@ -178,7 +181,8 @@ router.patch('/:id', async (req, res) => {
     const email = req.body.newEmail
     const name = req.body.name
     const surname = req.body.surname
-    const body = { name, surname }
+    const userIcon = req.body.userIcon
+    const body = { name, surname, userIcon }
 
     if (email) {
       body.verifyEmail = email
@@ -192,7 +196,7 @@ router.patch('/:id', async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: body },
-      { new: true, select: '_id name surname email' }
+      { new: true, select: '_id name surname email userIcon' }
     )
     if (!user) return res.status(404).send()
 

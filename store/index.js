@@ -1,5 +1,7 @@
 export const state = () => ({
-  addBeer: true,
+  addBeer: false,
+  beerReview: false,
+  editBeer: false,
   editProfile: false,
   changePassword: false,
   rules: {
@@ -18,6 +20,8 @@ export const mutations = {
     state.auth.user = Object.assign({}, state.auth.user, user)
   },
   toggleAddBeer(state) { state.addBeer = !state.addBeer },
+  toggleEditBeer(state) { state.editBeer = !state.editBeer },
+  toggleBeerReview(state) { state.beerReview = !state.beerReview },
   toggleEditProfile(state) { state.editProfile = !state.editProfile },
   toggleChangePassword(state) { state.changePassword = !state.changePassword }
 }
