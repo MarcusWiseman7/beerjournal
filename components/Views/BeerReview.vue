@@ -10,13 +10,14 @@
           ref="form"
           lazy-validation
         >
-          <h3 class="mb-5">Rating(1-10)</h3>
+          <h3 class="mb-5">Rating (5 is best)</h3>
           <v-slider
             v-model="rating"
+            :rules="[rules.required]"
             always-dirty
             thumb-label="always"
             min="1"
-            max="10"
+            max="5"
           >
             <template v-slot:prepend>
               <v-icon @click.native="decrement">remove</v-icon>
@@ -25,7 +26,7 @@
               <v-icon @click.native="increment">add</v-icon>
             </template>
           </v-slider>
-          <h3 class="mb-5">Price(CZK)</h3>
+          <h3 class="mb-5">Price (CZK)</h3>
           <v-slider
             v-model="price"
             always-dirty
@@ -76,7 +77,7 @@ export default {
       loading: false,
       price: null,
       location: '',
-      rating: 7,
+      rating: null,
       notes: '',
       max: v => (v && v.length <= 250) || 'Max 250 characters'
     }

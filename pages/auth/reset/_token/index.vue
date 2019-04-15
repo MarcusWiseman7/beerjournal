@@ -67,11 +67,11 @@ export default {
       sameAs: v => v === this.password || 'Must match password'
     }
   },
-  asyncData({ params }) {
-    return { token: params.token }
-  },
   computed: {
     rules() { return this.$store.state.rules }
+  },
+  asyncData({ params }) {
+    return { token: params.token }
   },
   methods: {
     onSubmit() {

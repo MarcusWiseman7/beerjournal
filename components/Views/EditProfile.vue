@@ -11,8 +11,8 @@
           lazy-validation
         >
           <v-select
-            append-icon="arrow_drop_down"
             v-model="user.userIcon"
+            append-icon="arrow_drop_down"
             :items="userIcons"
             label="User Icon"
           >

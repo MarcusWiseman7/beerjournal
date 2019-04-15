@@ -17,12 +17,14 @@
             required
             autofocus
           ></v-text-field>
-          <v-text-field
+          <v-combobox
             v-model="brewery"
-            :rules="[rules.required, rules.max]"
+            :rules="[rules.required]"
+            :items="breweries"
+            append-icon="arrow_drop_down"
             label="Brewery"
             required
-          ></v-text-field>
+          ></v-combobox>
           <v-select
             v-model="style"
             :rules="[rules.required]"
@@ -31,7 +33,7 @@
             label="Style"
             required
           ></v-select>
-          <h3>Degrees</h3>
+          <h3 class="mb-5">Degrees</h3>
           <v-slider
             v-model="degrees"
             always-dirty
@@ -46,7 +48,7 @@
               <v-icon @click.native="increment">add</v-icon>
             </template>
           </v-slider>
-          <h3>ABV</h3>
+          <h3 class="mb-5">ABV</h3>
           <v-slider
             v-model="abv"
             always-dirty
@@ -78,12 +80,14 @@
 
 <script>
 import beerItems from '~/data/beerStyles.json'
+import breweries from '~/data/sorted.json'
 
 export default {
   name: 'AddBeer',
   data() {
     return {
       beerItems,
+      breweries,
       loading: false,
       beerName: '',
       brewery: '',
