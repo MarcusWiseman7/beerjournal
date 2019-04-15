@@ -3,7 +3,7 @@
     <my-spinner :loading="loading" />
     <v-card>
       <v-card-title>
-        <h1>Beer</h1>
+        <h1 style="color:#FFA000">Beer</h1>
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"

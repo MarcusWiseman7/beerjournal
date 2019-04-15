@@ -3,7 +3,7 @@
     <my-spinner :loading="loading" />
     <v-card>
       <v-card-title>
-        <h1>Add Beer</h1>
+        <h1 style="color:#FFA000">Add Beer</h1>
       </v-card-title>
       <v-card-text>
         <v-form

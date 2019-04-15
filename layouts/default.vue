@@ -14,3 +14,9 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+h1 {
+  font-weight: normal;
+}
+</style>
