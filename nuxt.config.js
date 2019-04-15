@@ -53,14 +53,19 @@ module.exports = {
    */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
+    proxy: true,
+    https: true
+  },
+  proxy: {
+    '/api/': { target: 'https://api.beerjournal.cz', pathRewrite: { '^/api/': '' } }
   },
   auth: {
     // Authentication options
     redirect: {
-      login: '/auth/login',
+      login: '/',
       logout: '/',
-      callback: '/auth/login',
-      home: '/admin'
+      callback: '/',
+      home: '/'
     },
     strategies: {
       local: {
