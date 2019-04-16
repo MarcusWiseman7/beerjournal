@@ -29,6 +29,10 @@
               <v-icon>{{ item }}</v-icon>
             </template>
           </v-select>
+          <v-switch
+            v-model="user.darkMode"
+            label="Dark Mode"
+          ></v-switch>
           <v-text-field
             v-model="user.name"
             :rules="[rules.required, rules.max]"

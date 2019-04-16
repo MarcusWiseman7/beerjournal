@@ -53,7 +53,7 @@ router.get('/user', async (req, res) => {
   try {
     const user = await User.findOne(
       { jwt: req.headers.authorization.substring(7) },
-      '_id name surname email userIcon'
+      '_id name surname email userIcon darkMode'
     )
 
     if (!user) return res.status(404).send()

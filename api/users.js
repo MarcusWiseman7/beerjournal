@@ -165,7 +165,7 @@ router.post('/newUser', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
-      .select('_id name surname email userIcon')
+      .select('_id name surname email userIcon darkMode')
       .populate('reviews')
     if (!user) return res.status(404).send()
 
@@ -182,7 +182,8 @@ router.patch('/:id', async (req, res) => {
     const name = req.body.name
     const surname = req.body.surname
     const userIcon = req.body.userIcon
-    const body = { name, surname, userIcon }
+    const darkMode = req.body.darkMode
+    const body = { name, surname, userIcon, darkMode }
 
     if (email) {
       body.verifyEmail = email
@@ -196,7 +197,7 @@ router.patch('/:id', async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: body },
-      { new: true, select: '_id name surname email userIcon' }
+      { new: true, select: '_id name surname email userIcon darkMode' }
     )
     if (!user) return res.status(404).send()
 

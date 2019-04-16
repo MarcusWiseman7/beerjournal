@@ -24,6 +24,7 @@
                 :rules="[rules.required, rules.max]"
                 label="Name"
                 required
+                :autofocus="signup"
               ></v-text-field>
               <v-text-field
                 v-model="surname"
@@ -37,6 +38,7 @@
               :rules="[rules.required, rules.email, rules.max]"
               label="Email"
               required
+              :autofocus="!signup"
             ></v-text-field>
             <v-text-field
               v-if="!forgotPassword"

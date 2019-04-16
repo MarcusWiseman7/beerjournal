@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema(
     password: { type: String, required: true, trim: true },
     email: { type: String, trim: true, unique: true },
     gdprApproval: { type: Boolean, default: false },
+    darkMode: { type: Boolean, default: false },
     dateCreated: { type: Date, default: Date.now },
     reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
     verifyEmail: { type: String, trim: true },
