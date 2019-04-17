@@ -1,6 +1,7 @@
 export const state = () => ({
   beers: [],
   counter: 0,
+  counter1: 0,
   beerReview: {},
   addBeer: false,
   beerReviewDialog: false,
@@ -23,6 +24,7 @@ export const mutations = {
     state.auth.user = Object.assign({}, state.auth.user, user)
     state.counter++
   },
+  incCounter1(state) { state.counter1++ },
   setBeers(state, beers) { state.beers = beers },
   setReview(state, review) { state.beerReview = Object.assign({}, state.beerReview, review) },
   toggleAddBeer(state) { state.addBeer = !state.addBeer },

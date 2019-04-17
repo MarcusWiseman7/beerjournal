@@ -42,7 +42,7 @@ module.exports = {
   plugins: [
     '~/plugins/vuetify',
     '~/plugins/my-global-components',
-    { src: '~/plugins/nuxt-server-init', mode: 'client' }
+    { src: '~/plugins/nuxt-client-init', mode: 'client' }
   ],
 
   /*

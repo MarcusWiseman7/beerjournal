@@ -111,6 +111,7 @@ export default {
         this.$axios.post('/beers', this.beer)
           .then((res) => {
             this.loading = false
+            this.$store.commit('incCounter1')
             this.$store.commit('toggleAddBeer')
             this.$toast.success('Beer added', { duration: 4000 })
           })

@@ -24,7 +24,7 @@
       class="mb-3"
     />
     <beer-table
-      :key="$store.state.counter"
+      :key="$store.state.counter1"
       title="Beers"
     />
     <beer-review />
