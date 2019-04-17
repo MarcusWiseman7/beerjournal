@@ -55,6 +55,13 @@ router.get('/user', async (req, res) => {
       { jwt: req.headers.authorization.substring(7) },
       '_id name surname email userIcon darkMode'
     )
+      .populate({
+        path: 'reviews',
+        populate: {
+          path: 'beer',
+          select: '_id beerName brewery style degrees abv averagePrice averageRating'
+        }
+      })
 
     if (!user) return res.status(404).send()
 

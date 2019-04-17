@@ -1,0 +1,126 @@
+<template>
+  <div>
+    <my-spinner :loading="loading" />
+    <v-dialog
+      v-model="$store.state.beerReview"
+      max-width="450"
+      persistent
+    >
+      <v-card>
+        <v-card-title>
+          <h1 style="color:#FFA000">Beer Review</h1>
+          <h3>{{ review.beer.brewery }} {{ review.beer.beerName }}</h3>
+        </v-card-title>
+        <v-card-text>
+          <v-form
+            ref="form"
+            lazy-validation
+          >
+            <h3 class="mb-5">Rating (5 is best)</h3>
+            <v-slider
+              v-model="review.rating"
+              :rules="[rules.required]"
+              always-dirty
+              thumb-label="always"
+              min="1"
+              max="5"
+            >
+              <template v-slot:prepend>
+                <v-icon @click.native="decrement">remove</v-icon>
+              </template>
+              <template v-slot:append>
+                <v-icon @click.native="increment">add</v-icon>
+              </template>
+            </v-slider>
+            <h3 class="mb-5">Price (CZK)</h3>
+            <v-slider
+              v-model="review.price"
+              always-dirty
+              thumb-label="always"
+              min="1"
+              max="150"
+            >
+              <template v-slot:prepend>
+                <v-icon @click.native="decrement1">remove</v-icon>
+              </template>
+              <template v-slot:append>
+                <v-icon @click.native="increment1">add</v-icon>
+              </template>
+            </v-slider>
+            <v-text-field
+              v-model="review.location"
+              label="Location"
+              maxlength="75"
+            ></v-text-field>
+            <v-textarea
+              v-model="review.notes"
+              label="Notes"
+              auto-grow
+              maxlength="250"
+              counter="250"
+              rows="3"
+            ></v-textarea>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click.native="onCancel">Cancel</v-btn>
+          <v-btn
+            color="primary"
+            @click.native="onSubmit"
+          >Add</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'BeerReview',
+  data() {
+    return {
+      loading: false,
+      max: v => (v && v.length <= 250) || 'Max 250 characters'
+    }
+  },
+  props: {
+    review: { type: Object, default: () => { return {} } }
+  },
+  computed: {
+    rules() { return this.$store.state.rules }
+  },
+  methods: {
+    onSubmit() {
+      if (this.$refs.form.validate()) {
+        this.loading = true
+        this.$axios.post('/reviews', {
+          price: this.review.price,
+          location: this.review.location,
+          rating: this.review.rating,
+          notes: this.review.notes,
+          beer: this.review.beer._id
+        })
+          .then((res) => {
+            this.loading = false
+            this.$store.commit('toggleBeerReview')
+            this.$toast.success('Added beer review', { duration: 4000 })
+          })
+          .catch(() => {
+            this.loading = false
+            this.$toast.error('Error adding beer review, please try again', { duration: 4000 })
+          })
+      }
+    },
+    onCancel() {
+      this.$store.commit('toggleBeerReview')
+    },
+    decrement() { this.rating-- },
+    increment() { this.rating++ },
+    decrement1() { this.price-- },
+    increment1() { this.price++ }
+  }
+}
+</script>
+
+<style lang="stylus" scoped></style>

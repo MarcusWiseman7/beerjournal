@@ -24,6 +24,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const beers = await Beer.find()
+      .select('_id beerName brewery style degrees abv averagePrice averageRating')
     if (!beers) return res.status(404).send()
 
     res.status(200).send(beers)

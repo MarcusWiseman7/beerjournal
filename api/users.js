@@ -166,7 +166,13 @@ router.get('/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
       .select('_id name surname email userIcon darkMode')
-      .populate('reviews')
+      .populate({
+        path: 'reviews',
+        populate: {
+          path: 'beer',
+          select: '_id beerName brewery style degrees abv averagePrice averageRating'
+        }
+      })
     if (!user) return res.status(404).send()
 
     res.status(200).send(user)
