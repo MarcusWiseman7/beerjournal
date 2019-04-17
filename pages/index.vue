@@ -1,14 +1,10 @@
 <template>
   <div>
-    <v-container v-if="$store.state.auth.loggedIn">
+    <v-container v-if="isAdmin">
       <v-layout justify-center>
         <h3>hi, {{ $store.state.auth.user.name }}!</h3>
       </v-layout>
     </v-container>
-    <add-beer
-      v-if="$store.state.addBeer"
-      class="mb-3"
-    />
     <edit-profile
       v-if="$store.state.editProfile"
       class="mb-3"
@@ -18,10 +14,20 @@
       class="mb-3"
     />
     <beer-table
+      v-if="isAdmin"
+      :key="$store.state.counter"
       class="mb-3"
       title="My Beers"
     />
-    <beer-table title="Beers" />
+    <add-beer
+      v-if="$store.state.addBeer"
+      class="mb-3"
+    />
+    <beer-table
+      :key="$store.state.counter"
+      title="Beers"
+    />
+    <beer-review />
   </div>
 </template>
 
@@ -30,6 +36,7 @@ import AddBeer from '~/components/Views/AddBeer'
 import EditProfile from '~/components/Views/EditProfile'
 import ChangePassword from '~/components/Views/ChangePassword'
 import BeerTable from '~/components/Views/BeerTable'
+import BeerReview from '~/components/Dialogs/BeerReview'
 
 export default {
   auth: false,
@@ -37,7 +44,11 @@ export default {
     AddBeer,
     EditProfile,
     ChangePassword,
-    BeerTable
+    BeerTable,
+    BeerReview
+  },
+  computed: {
+    isAdmin() { return this.$store.state.auth.loggedIn }
   }
 }
 </script>

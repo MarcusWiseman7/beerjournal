@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
 })
 
 // Retrieve all beers
-router.get('/', async (req, res) => {
+router.get('/allBeers', async (req, res) => {
   try {
     const beers = await Beer.find()
       .select('_id beerName brewery style degrees abv averagePrice averageRating')

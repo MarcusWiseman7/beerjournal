@@ -168,6 +168,7 @@ router.get('/:id', async (req, res) => {
       .select('_id name surname email userIcon darkMode')
       .populate({
         path: 'reviews',
+        select: '-__v dateCreated',
         populate: {
           path: 'beer',
           select: '_id beerName brewery style degrees abv averagePrice averageRating'

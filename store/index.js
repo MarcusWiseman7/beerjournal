@@ -1,6 +1,9 @@
 export const state = () => ({
+  beers: [],
+  counter: 0,
+  beerReview: {},
   addBeer: false,
-  beerReview: false,
+  beerReviewDialog: false,
   editBeer: false,
   editProfile: false,
   changePassword: false,
@@ -18,10 +21,20 @@ export const state = () => ({
 export const mutations = {
   setUser(state, user) {
     state.auth.user = Object.assign({}, state.auth.user, user)
+    state.counter++
   },
+  setBeers(state, beers) { state.beers = beers },
+  setReview(state, review) { state.beerReview = Object.assign({}, state.beerReview, review) },
   toggleAddBeer(state) { state.addBeer = !state.addBeer },
   toggleEditBeer(state) { state.editBeer = !state.editBeer },
-  toggleBeerReview(state) { state.beerReview = !state.beerReview },
+  toggleBeerReview(state) { state.beerReviewDialog = !state.beerReviewDialog },
   toggleEditProfile(state) { state.editProfile = !state.editProfile },
   toggleChangePassword(state) { state.changePassword = !state.changePassword }
+}
+
+export const actions = {
+  async nuxtClientInit({ commit }, { app }) {
+    const beers = await app.$axios.$get('/beers/allBeers')
+    commit('setBeers', beers)
+  }
 }

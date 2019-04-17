@@ -11,7 +11,7 @@
             >{{ title }}</h1>
             <v-spacer></v-spacer>
             <v-btn
-              v-if="title === 'My Beers'"
+              v-if="$store.state.auth.loggedIn && title === 'Beers'"
               @click.native="$store.commit('toggleAddBeer')"
             >Add Beer</v-btn>
           </v-layout>
@@ -33,11 +33,24 @@
         next-icon="arrow_right"
         hide-actions
       >
-        <template v-slot:items="props">
-          <tr @click="editBeer(props.item)">
-            <td class="text-xs-right">{{ props.item.rating }}</td>
+        <template
+          v-if="title === 'Beers'"
+          v-slot:items="props"
+        >
+          <tr @click="reviewBeer(props.item)">
+            <td class="text-xs-right">{{ props.item.averageRating }}</td>
             <td><span style="color:#FFA000">{{ props.item.beerName }}</span></td>
             <td>{{ props.item.brewery }}</td>
+          </tr>
+        </template>
+        <template
+          v-else
+          v-slot:items="props"
+        >
+          <tr @click="reviewBeer(props.item)">
+            <td class="text-xs-right">{{ props.item.rating }}</td>
+            <td><span style="color:#FFA000">{{ props.item.beer.beerName }}</span></td>
+            <td>{{ props.item.beer.brewery }}</td>
           </tr>
         </template>
         <v-alert
@@ -56,9 +69,6 @@
 <script>
 export default {
   name: 'BeerTable',
-  components: {
-
-  },
   props: {
     title: { type: String, default: () => { return 'Beers' } }
   },
@@ -66,7 +76,6 @@ export default {
     return {
       loading: false,
       search: '',
-      reviewBeer: {},
       user: {},
       items: []
     }
@@ -88,17 +97,24 @@ export default {
   },
   created() {
     if (this.title === 'My Beers') {
-      this.items = this.items.concat(this.$store.state.auth.user.reviews)
+      this.items = this.$store.state.auth.user.reviews
     } else {
-      this.$axios.get('/beers')
-        .then((res) => {
-          this.items = this.items.concat(res.data)
-        })
+      this.items = this.$store.state.beers
     }
   },
   methods: {
-    editBeer(beer) {
+    reviewBeer(beer) {
+      const review = this.title === 'Beers'
+        ? {
+          rating: null,
+          price: null,
+          location: '',
+          notes: '',
+          beer
+        } : beer
 
+      this.$store.commit('setReview', review)
+      this.$store.commit('toggleBeerReview')
     }
   }
 }

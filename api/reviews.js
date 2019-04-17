@@ -1,18 +1,31 @@
+/* eslint-disable no-console */
 const express = require('express')
 
 // eslint-disable-next-line no-unused-vars
 const { mongoose } = require('../db/mongoose')
 const { Review } = require('../models/review')
 const { Beer } = require('../models/beer')
+const { User } = require('../models/user')
 
 const router = express.Router()
 
+const populateParams = {
+  path: 'reviews',
+  select: '-__v -dateCreated',
+  populate: {
+    path: 'beer',
+    select: '_id beerName brewery style degrees abv averagePrice averageRating'
+  }
+}
+
 // Create new review
-router.post('/', async (req, res) => {
+router.post('/:userId', async (req, res) => {
   try {
-    const review = await new Review(req.body).save((err) => {
+    const review = await new Review(req.body)
+    await review.save((err) => {
       if (err) return res.status(400).send(err)
     })
+
     const beer = await Beer.findById(review.beer)
     if (!beer) return res.status(404).send()
 
@@ -29,46 +42,45 @@ router.post('/', async (req, res) => {
       if (err) return res.status(400).send(err)
     })
 
-    res.status(200).send({ review, beer })
-  } catch (err) {
-    return res.status(400).send(err)
-  }
-})
+    const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      { $push: { reviews: review._id } },
+      { new: true }
+    )
+      .populate(populateParams)
+    if (!user) return res.status(404).send()
 
-// Retrieve review
-router.post('/:id', async (req, res) => {
-  try {
-    const review = await Review.findById(req.params.id)
-      .populate('beer')
-    if (!review) return res.status(404).send()
-
-    res.status(200).send(review)
+    res.status(200).send(user)
   } catch (err) {
     return res.status(400).send(err)
   }
 })
 
 // Update review
-router.post('/:id', async (req, res) => {
+router.patch('/:id', async (req, res) => {
   try {
+    const userId = req.body.userId
     const beerId = req.body.beer
     const rating = req.body.rating
-    const previousRating = req.body.previousRating
     const price = req.body.price
-    const previousPrice = req.body.previousPrice
     const location = req.body.location
     const notes = req.body.notes
+
+    const review = await Review.findByIdAndUpdate(
+      req.params.id, { $set: { price, location, rating, notes } }, { new: false }
+    )
+    if (!review) return res.status(404).send()
 
     if (rating || price) {
       const beer = await Beer.findById(beerId)
       if (!beer) return res.status(404).send()
 
       if (rating) {
-        beer.sumOfAllRatings = +beer.sumOfAllRatings - +previousRating + +rating
+        beer.sumOfAllRatings = +beer.sumOfAllRatings - +review.rating + +rating
         beer.averageRating = Math.round(+beer.sumOfAllRatings / +beer.totalNumberOfRatings)
       } else if (price) {
-        if (previousPrice) {
-          beer.sumOfAllPrices = +beer.sumOfAllPrices - +previousPrice + +price
+        if (review.price) {
+          beer.sumOfAllPrices = +beer.sumOfAllPrices - +review.price + +price
         } else {
           beer.sumOfAllPrices = +beer.sumOfAllPrices + +price
           beer.totalNumberOfPrices = +beer.totalNumberOfPrices + 1
@@ -80,24 +92,33 @@ router.post('/:id', async (req, res) => {
         if (err) return res.status(400).send(err)
       })
     }
-    const review = await Review.findByIdAndUpdate(
-      req.params.id, { $set: { price, location, rating, notes } }, { new: true }
-    ).populate('beer')
-    if (!review) return res.status(404).send()
 
-    res.status(200).send(review)
+    const user = await User.findById(userId)
+      .populate(populateParams)
+    if (!user) return res.status(404).send()
+
+    res.status(200).send(user)
   } catch (err) {
     return res.status(400).send(err)
   }
 })
 
 // Delete review
-router.delete('/:id', async (req, res) => {
+router.delete('/:id/:userId', async (req, res) => {
   try {
-    const review = await Review.findByIdAndRemove(req.params.id)
+    const reviewId = req.params.id
+    const review = await Review.findByIdAndRemove(reviewId)
     if (!review) return res.status(404).send()
 
-    res.status(200).send()
+    const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      { $pull: { reviews: reviewId } },
+      { new: true }
+    )
+      .populate(populateParams)
+    if (!user) return res.status(404).send()
+
+    res.status(200).send(user)
   } catch (err) {
     return res.status(400).send(err)
   }
