@@ -38,5 +38,10 @@ export const actions = {
   async nuxtClientInit({ commit }, { app }) {
     const beers = await app.$axios.$get('/beers/allBeers')
     commit('setBeers', beers)
+  },
+  async getBeers({ commit }) {
+    const beers = await this.$axios.$get('/beers/allBeers')
+    commit('setBeers', beers)
+    commit('incCounter1')
   }
 }

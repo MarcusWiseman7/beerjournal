@@ -17,6 +17,10 @@ const populateParams = {
     select: '_id beerName brewery style degrees abv averagePrice averageRating'
   }
 }
+const averageRound = (a, b, c) => {
+  const x = Math.pow(10, c || 0)
+  return Math.round(a / b * x) / x
+}
 
 // Create new review
 router.post('/:userId', async (req, res) => {
@@ -31,11 +35,11 @@ router.post('/:userId', async (req, res) => {
 
     beer.sumOfAllRatings = +beer.sumOfAllRatings + +review.rating
     beer.totalNumberOfRatings = +beer.totalNumberOfRatings + 1
-    beer.averageRating = Math.round(+beer.sumOfAllRatings / +beer.totalNumberOfRatings)
+    beer.averageRating = averageRound(+beer.sumOfAllRatings, +beer.totalNumberOfRatings, 1)
     if (review.price) {
       beer.sumOfAllPrices = +beer.sumOfAllPrices + +review.price
       beer.totalNumberOfPrices = +beer.totalNumberOfPrices + 1
-      beer.averagePrice = Math.round(+beer.sumOfAllPrices / +beer.totalNumberOfPrices)
+      beer.averagePrice = averageRound(+beer.sumOfAllPrices, +beer.totalNumberOfPrices, 0)
     }
 
     await beer.save((err) => {
@@ -77,7 +81,7 @@ router.patch('/:id', async (req, res) => {
 
       if (rating) {
         beer.sumOfAllRatings = +beer.sumOfAllRatings - +review.rating + +rating
-        beer.averageRating = Math.round(+beer.sumOfAllRatings / +beer.totalNumberOfRatings)
+        beer.averageRating = averageRound(+beer.sumOfAllRatings, +beer.totalNumberOfRatings, 1)
       } else if (price) {
         if (review.price) {
           beer.sumOfAllPrices = +beer.sumOfAllPrices - +review.price + +price
@@ -85,7 +89,7 @@ router.patch('/:id', async (req, res) => {
           beer.sumOfAllPrices = +beer.sumOfAllPrices + +price
           beer.totalNumberOfPrices = +beer.totalNumberOfPrices + 1
         }
-        beer.averagePrice = Math.round(+beer.sumOfAllPrices / +beer.totalNumberOfPrices)
+        beer.averagePrice = averageRound(+beer.sumOfAllPrices, +beer.totalNumberOfPrices, 0)
       }
 
       await beer.save((err) => {

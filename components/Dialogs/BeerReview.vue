@@ -142,6 +142,7 @@ export default {
             .then((res) => {
               this.loading = false
               this.$store.commit('setUser', res.data)
+              this.$store.dispatch('getBeers')
               this.onCancel()
               this.$toast.success('Added beer review', { duration: 4000 })
             })
