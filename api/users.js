@@ -13,7 +13,7 @@ const router = express.Router()
 // Nodemailer transport
 const smtpTransport = nodemailer.createTransport({
   host: 'smtp.office365.com',
-  auth: { user: 'no-reply@agileteams.io', pass: 'Fal32135' }
+  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'mmOUXH6lSwhTX0ZJ' }
 })
 
 const verifyUserEmail = (params) => {
@@ -147,15 +147,13 @@ router.post('/newUser', async (req, res) => {
     const checkUserEmail = await User.findOne({ email })
     if (checkUserEmail) return res.status(404).send()
 
-    await new User({ name, surname, verifyEmail: email, password, gdprApproval })
-      .save((err) => {
-        if (err) return res.status(400).send(err)
-      })
+    const user = await new User({ name, surname, verifyEmail: email, password, gdprApproval })
+    await user.save()
 
     const info = await verifyUserEmail({ url, name, surname, email })
     if (info.err) return res.status(info.err).send()
 
-    res.status(200).send()
+    return res.status(200).send()
   } catch (err) {
     return res.status(400).send(err)
   }

@@ -52,15 +52,6 @@
               @keyup.enter="onSubmit"
             ></v-text-field>
             <div v-if="signup">
-              <v-text-field
-                v-model="verifyPassword"
-                :append-icon="show1 ? 'visibility' : 'visibility_off'"
-                :rules="[rules.required, sameAs]"
-                :type="show1 ? 'text' : 'password'"
-                label="Confirm Password"
-                required
-                @click:append="show1 = !show1"
-              ></v-text-field>
               <v-checkbox
                 v-model="gdprApproval"
                 :rules="[rules.required]"
@@ -160,14 +151,11 @@ export default {
       surname: '',
       email: '',
       password: '',
-      verifyPassword: '',
       forgotPassword: '',
       gdprApproval: false,
       show: false,
-      show1: false,
       recaptchaSitekey: '6Lf-4JAUAAAAAIQ9N55FIgiuqmohKbBZkz8rzOZp',
-      recaptchaVerified: false,
-      sameAs: v => v === this.password || 'Must match password'
+      recaptchaVerified: false
     }
   },
   computed: {
@@ -187,7 +175,7 @@ export default {
         if (!this.signup && !this.forgotPassword) {
           this.$auth.loginWith('local', {
             data: {
-              username: this.email,
+              username: this.email.toLowerCase(),
               password: this.password
             }
           })
@@ -203,7 +191,7 @@ export default {
           this.$axios.post('/users/newUser', {
             name: this.name,
             surname: this.surname,
-            email: this.email,
+            email: this.email.toLowerCase(),
             password: this.password,
             gdprApproval: this.gdprApproval
           })
@@ -214,11 +202,11 @@ export default {
             })
             .catch(() => {
               this.loading = false
-              this.$$toast.error('Error signing up, please try again', { duration: 4000 })
+              this.$toast.error('Error signing up, please try again', { duration: 4000 })
             })
         } else {
           this.$axios.post('/users/forgot', {
-            email: this.email
+            email: this.email.toLowerCase()
           })
             .then(() => {
               this.onCancel()

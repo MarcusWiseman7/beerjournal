@@ -1,15 +1,13 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 
-const options = { usePushEach: true, discriminatorKey: 'role' }
-
 const UserSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     surname: { type: String, required: true, trim: true },
     userIcon: { type: String, default: 'fa fa-user-astronaut' },
-    password: { type: String, required: true, trim: true },
-    email: { type: String, trim: true, unique: true },
+    password: { type: String, trim: true },
+    email: { type: String, trim: true },
     gdprApproval: { type: Boolean, default: false },
     darkMode: { type: Boolean, default: false },
     dateCreated: { type: Date, default: Date.now },
@@ -19,7 +17,7 @@ const UserSchema = new mongoose.Schema(
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date }
   },
-  options
+  { usePushEach: true }
 )
 
 UserSchema.pre('save', function (next) {
