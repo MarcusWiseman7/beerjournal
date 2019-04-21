@@ -19,20 +19,17 @@
       class="mb-3"
       title="My Beers"
     />
-    <add-beer
-      v-if="$store.state.addBeer"
-      class="mb-3"
-    />
     <beer-table
       :key="$store.state.counter1"
       title="Beers"
     />
+    <add-beer />
     <beer-review />
   </div>
 </template>
 
 <script>
-import AddBeer from '~/components/Views/AddBeer'
+import AddBeer from '~/components/Dialogs/AddBeer'
 import EditProfile from '~/components/Views/EditProfile'
 import ChangePassword from '~/components/Views/ChangePassword'
 import BeerTable from '~/components/Views/BeerTable'
