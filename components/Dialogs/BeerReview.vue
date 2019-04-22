@@ -11,7 +11,9 @@
           <v-layout column>
             <h1 style="color:#FFA000">Beer Review</h1>
             <h2 v-if="beer">{{ beer.brewery }} {{ beer.beerName }}</h2>
+            <h3 v-if="beer">Style: {{ beer.style }}</h3>
             <h3 v-if="beer">Ave Rating: {{ beer.averageRating }}</h3>
+            <h3 v-if="beer">Ave Price: {{ beer.averagePrice }}</h3>
           </v-layout>
         </v-card-title>
         <v-card-text>
