@@ -19,7 +19,7 @@ const smtpTransport = nodemailer.createTransport({
 const verifyUserEmail = (params) => {
   const mailOptions = {
     to: params.email,
-    from: '<no-reply@agileteams.io>',
+    from: '<no-reply.beerjournal@outlook.com>',
     subject: 'BeerJournal Email Verification',
     text:
       `Hello ${params.name} ${params.surname}, \n\n` +
@@ -87,7 +87,7 @@ router.patch('/forgot', async (req, res) => {
 
     const mailOptions = {
       to: email,
-      from: 'Password Reset <no-reply@agileteams.io>',
+      from: 'Password Reset <no-reply.beerjournal@outlook.com>',
       subject: 'BeerJournal Password Reset',
       text:
         `Hello ${user.name}, \n\n` +
