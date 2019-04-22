@@ -118,7 +118,7 @@ export default {
           .then(() => {
             this.loading = false
             this.$store.dispatch('getBeers')
-            this.$store.commit('toggleAddBeer')
+            this.onCancel()
             this.$toast.success('Beer added', { duration: 4000 })
           })
           .catch(() => {
