@@ -81,6 +81,7 @@ export default {
     }
   },
   computed: {
+    myBeerList() { return this.items.map(x => x._id) },
     headers() {
       return this.title === 'Beers'
         ? [
@@ -104,17 +105,23 @@ export default {
   },
   methods: {
     reviewBeer(beer) {
-      const review = this.title === 'Beers'
-        ? {
-          rating: null,
-          price: null,
-          location: '',
-          notes: '',
-          beer
-        } : beer
+      if (this.$store.state.auth.loggedIn) {
+        const reviews = this.$store.state.auth.user.reviews
+        const review = this.title === 'My Beers'
+          ? beer
+          : reviews.map(x => x.beer._id).includes(beer._id)
+            ? reviews[reviews.findIndex(x => x.beer._id === beer._id)]
+            : {
+              rating: null,
+              price: null,
+              location: '',
+              notes: '',
+              beer
+            }
 
-      this.$store.commit('setReview', review)
-      this.$store.commit('toggleBeerReview')
+        this.$store.commit('setReview', review)
+        this.$store.commit('toggleBeerReview')
+      }
     }
   }
 }
