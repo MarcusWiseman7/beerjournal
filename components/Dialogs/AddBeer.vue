@@ -18,7 +18,7 @@
             <v-combobox
               v-model="beer.beerName"
               :rules="[rules.required, rules.max]"
-              :items="beerNameItems"
+              :items="beerNames"
               append-icon="arrow_drop_down"
               label="Beer name"
               required
@@ -89,6 +89,7 @@
 <script>
 import beerStyles from '~/data/beerStyles.json'
 import breweries from '~/data/sorted.json'
+import beerNames from '~/data/beerNames.json'
 
 export default {
   name: 'AddBeer',
@@ -96,6 +97,7 @@ export default {
     return {
       beerStyles,
       breweries,
+      beerNames,
       loading: false,
       beer: {
         beerName: '',

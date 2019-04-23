@@ -154,7 +154,7 @@ export default {
       forgotPassword: '',
       gdprApproval: false,
       show: false,
-      recaptchaSitekey: '6Lf-4JAUAAAAAIQ9N55FIgiuqmohKbBZkz8rzOZp',
+      recaptchaSitekey: '6LfRuJ8UAAAAADWaP0qEKDqwpoLtvqJDHN9-LNRB',
       recaptchaVerified: false
     }
   },
@@ -171,52 +171,56 @@ export default {
   methods: {
     onSubmit() {
       if (this.$refs.form.validate()) {
-        this.loading = true
-        if (!this.signup && !this.forgotPassword) {
-          this.$auth.loginWith('local', {
-            data: {
-              username: this.email.toLowerCase(),
-              password: this.password
-            }
-          })
-            .then(() => {
-              this.loading = false
-              this.$toast.success('Logged in', { duration: 4000 })
+        if (this.recaptchaVerified) {
+          this.loading = true
+          if (!this.signup && !this.forgotPassword) {
+            this.$auth.loginWith('local', {
+              data: {
+                username: this.email.toLowerCase(),
+                password: this.password
+              }
             })
-            .catch(() => {
-              this.loading = false
-              this.$toast.error('Error logging in, please try again', { duration: 4000 })
+              .then(() => {
+                this.loading = false
+                this.$toast.success('Logged in', { duration: 4000 })
+              })
+              .catch(() => {
+                this.loading = false
+                this.$toast.error('Error logging in, please try again', { duration: 4000 })
+              })
+          } else if (this.signup) {
+            this.$axios.post('/users/newUser', {
+              name: this.name,
+              surname: this.surname,
+              email: this.email.toLowerCase(),
+              password: this.password,
+              gdprApproval: this.gdprApproval
             })
-        } else if (this.signup) {
-          this.$axios.post('/users/newUser', {
-            name: this.name,
-            surname: this.surname,
-            email: this.email.toLowerCase(),
-            password: this.password,
-            gdprApproval: this.gdprApproval
-          })
-            .then(() => {
-              this.onCancel()
-              this.loading = false
-              this.$toast.success('Success signing up, check your email for validation', { duration: 5000 })
+              .then(() => {
+                this.onCancel()
+                this.loading = false
+                this.$toast.success('Success signing up, check your email for validation', { duration: 5000 })
+              })
+              .catch(() => {
+                this.loading = false
+                this.$toast.error('Error signing up, please try again', { duration: 4000 })
+              })
+          } else {
+            this.$axios.post('/users/forgot', {
+              email: this.email.toLowerCase()
             })
-            .catch(() => {
-              this.loading = false
-              this.$toast.error('Error signing up, please try again', { duration: 4000 })
-            })
+              .then(() => {
+                this.onCancel()
+                this.loading = false
+                this.$toast.success('Check your email for instructions', { duration: 5000 })
+              })
+              .catch(() => {
+                this.loading = false
+                this.$toast.error('Error sending email, please try again', { duration: 4000 })
+              })
+          }
         } else {
-          this.$axios.post('/users/forgot', {
-            email: this.email.toLowerCase()
-          })
-            .then(() => {
-              this.onCancel()
-              this.loading = false
-              this.$toast.success('Check your email for instructions', { duration: 5000 })
-            })
-            .catch(() => {
-              this.loading = false
-              this.$toast.error('Error sending email, please try again', { duration: 4000 })
-            })
+          this.$toast.error(`You must prove you're not a robot!`, { duration: 4000 })
         }
       }
     },
