@@ -171,7 +171,9 @@ export default {
   methods: {
     onSubmit() {
       if (this.$refs.form.validate()) {
-        if (this.recaptchaVerified) {
+        if (this.signup && !this.recaptchaVerified) {
+          this.$toast.error(`You must prove you're not a robot!`, { duration: 4000 })
+        } else {
           this.loading = true
           if (!this.signup && !this.forgotPassword) {
             this.$auth.loginWith('local', {
@@ -219,8 +221,6 @@ export default {
                 this.$toast.error('Error sending email, please try again', { duration: 4000 })
               })
           }
-        } else {
-          this.$toast.error(`You must prove you're not a robot!`, { duration: 4000 })
         }
       }
     },
