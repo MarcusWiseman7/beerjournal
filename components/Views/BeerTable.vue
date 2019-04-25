@@ -85,14 +85,14 @@ export default {
     headers() {
       return this.title === 'Beers'
         ? [
-          { text: 'Ave Rating', value: 'rating' },
+          { text: 'Ave Rating', value: 'averageRating' },
           { text: 'Beer', value: 'beerName' },
           { text: 'Brewery', value: 'brewery' }
         ]
         : [
           { text: 'Rating', value: 'rating' },
-          { text: 'Beer', value: 'beerName' },
-          { text: 'Brewery', value: 'brewery' }
+          { text: 'Beer', value: 'beer.beerName' },
+          { text: 'Brewery', value: 'beer.brewery' }
         ]
     }
   },

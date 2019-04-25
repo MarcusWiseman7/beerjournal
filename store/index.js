@@ -1,7 +1,7 @@
 export const state = () => ({
   beers: [],
   counter: 0,
-  counter1: 0,
+  counter1: 1000,
   beerReview: {},
   addBeerDialog: false,
   beerReviewDialog: false,
