@@ -20,21 +20,21 @@
           <v-form ref="form">
             <div v-if="signup">
               <v-text-field
-                v-model="name"
+                v-model.trim="name"
                 :rules="[rules.required, rules.max]"
                 label="Name"
                 required
                 :autofocus="signup"
               ></v-text-field>
               <v-text-field
-                v-model="surname"
+                v-model.trim="surname"
                 :rules="[rules.required, rules.max]"
                 label="Surname"
                 required
               ></v-text-field>
             </div>
             <v-text-field
-              v-model="email"
+              v-model.trim="email"
               :rules="[rules.required, rules.email, rules.max]"
               label="Email"
               required
@@ -42,7 +42,7 @@
             ></v-text-field>
             <v-text-field
               v-if="!forgotPassword"
-              v-model="password"
+              v-model.trim="password"
               :append-icon="show ? 'visibility' : 'visibility_off'"
               :rules="[rules.required, rules.min, rules.max]"
               :type="show ? 'text' : 'password'"

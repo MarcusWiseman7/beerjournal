@@ -16,7 +16,7 @@
             lazy-validation
           >
             <v-combobox
-              v-model="beer.beerName"
+              v-model.trim="beer.beerName"
               :rules="[rules.required, rules.max]"
               :items="beerNames"
               append-icon="arrow_drop_down"
@@ -25,7 +25,7 @@
               autofocus
             ></v-combobox>
             <v-combobox
-              v-model="beer.brewery"
+              v-model.trim="beer.brewery"
               :rules="[rules.required, rules.max]"
               :items="breweries"
               append-icon="arrow_drop_down"

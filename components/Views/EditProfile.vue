@@ -34,13 +34,13 @@
             label="Dark Mode"
           ></v-switch>
           <v-text-field
-            v-model="user.name"
+            v-model.trim="user.name"
             :rules="[rules.required, rules.max]"
             label="Name"
             required
           ></v-text-field>
           <v-text-field
-            v-model="user.surname"
+            v-model.trim="user.surname"
             :rules="[rules.required, rules.max]"
             label="Surname"
             required
@@ -57,7 +57,7 @@
           >Replace email?</v-btn>
           <v-text-field
             v-else
-            v-model="user.newEmail"
+            v-model.trim="user.newEmail"
             :rules="[rules.email, rules.max]"
             label="Replace email"
           ></v-text-field>

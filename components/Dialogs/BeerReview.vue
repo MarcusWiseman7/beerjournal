@@ -53,7 +53,7 @@
               </template>
             </v-slider>
             <v-text-field
-              v-model="location"
+              v-model.trim="location"
               label="Location"
               maxlength="75"
             ></v-text-field>
