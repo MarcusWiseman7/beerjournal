@@ -88,7 +88,7 @@
 
 <script>
 import beerStyles from '~/data/beerStyles.json'
-import breweries from '~/data/sorted.json'
+import breweries from '~/data/breweries.json'
 import beerNames from '~/data/beerNames.json'
 
 export default {

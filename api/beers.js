@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+const fs = require('fs')
+const path = require('path')
 const express = require('express')
 
 // eslint-disable-next-line no-unused-vars
@@ -6,6 +8,22 @@ const { mongoose } = require('../db/mongoose')
 const { Beer } = require('../models/beer')
 
 const router = express.Router()
+
+// sort breweries
+router.get('/sort', async (req, res) => {
+  try {
+    let list = await JSON.parse(fs.readFileSync(path.join(__dirname, '../data/sorted.json'), 'utf8'))
+
+    list = await list.sort((a, b) => {
+      return a.localeCompare(b)
+    })
+    await fs.writeFileSync(path.join(__dirname, '../data/breweries.json'), JSON.stringify(list), 'utf8')
+
+    res.status(200).send()
+  } catch {
+    return res.status(400).send()
+  }
+})
 
 // Create new beer
 router.post('/', async (req, res) => {
@@ -28,18 +46,6 @@ router.get('/allBeers', async (req, res) => {
     if (!beers) return res.status(404).send()
 
     res.status(200).send(beers)
-  } catch (err) {
-    return res.status(400).send(err)
-  }
-})
-
-// Retrieve beer
-router.get('/:id', async (req, res) => {
-  try {
-    const beer = await Beer.findById(req.params.id)
-    if (!beer) return res.status(404).send()
-
-    res.status(200).send(beer)
   } catch (err) {
     return res.status(400).send(err)
   }

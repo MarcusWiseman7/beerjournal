@@ -11,7 +11,18 @@
             >{{ title }}</h1>
             <v-spacer></v-spacer>
             <v-btn
-              v-if="$store.state.auth.loggedIn && title === 'Beers'"
+              v-if="title === 'My Beers'"
+              fab
+              color="primary"
+              top
+              right
+              absolute
+              @click.native="toggleBeerReview"
+            >
+              <v-icon>add</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="$store.state.auth.loggedIn && title === 'Beers' && $store.state.auth.user.email === 'md.wiseman@hotmail.com'"
               @click.native="$store.commit('toggleAddBeer')"
             >Add Beer</v-btn>
           </v-layout>
@@ -81,7 +92,9 @@ export default {
     }
   },
   computed: {
-    myBeerList() { return this.items.map(x => x._id) },
+    // myBeerList() {
+    //   return this.items.map(x => x._id)
+    // },
     headers() {
       return this.title === 'Beers'
         ? [
@@ -111,17 +124,15 @@ export default {
           ? beer
           : reviews.map(x => x.beer._id).includes(beer._id)
             ? reviews[reviews.findIndex(x => x.beer._id === beer._id)]
-            : {
-              rating: null,
-              price: null,
-              location: '',
-              notes: '',
-              beer
-            }
+            : { beer }
 
         this.$store.commit('setReview', review)
         this.$store.commit('toggleBeerReview')
       }
+    },
+    toggleBeerReview() {
+      this.$store.commit('resetReview')
+      this.$store.commit('toggleBeerReview')
     }
   }
 }

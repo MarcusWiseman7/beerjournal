@@ -7,11 +7,11 @@
     </v-container>
     <edit-profile
       v-if="$store.state.editProfile"
-      class="mb-3"
+      class="mb-5"
     />
     <change-password
       v-if="$store.state.changePassword"
-      class="mb-3"
+      class="mb-5"
     />
     <beer-table
       v-if="isAdmin"
