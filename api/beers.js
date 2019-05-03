@@ -67,6 +67,7 @@ router.post('/', async (req, res) => {
 // Retrieve all beers
 router.get('/allBeers', async (req, res) => {
   try {
+    await Beer.updateMany({}, { $set: { tempBeer: false } })
     const beers = await Beer.find({ tempBeer: false })
       .select('_id beerName brewery style degrees abv averagePrice averageRating')
     if (!beers) return res.status(404).send()
