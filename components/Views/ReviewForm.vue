@@ -3,10 +3,11 @@
     <v-card-title>
       <v-layout column>
         <h1 style="color:#FFA000">Beer Notes</h1>
-        <h2>{{ beer.brewery }} {{ beer.beerName }}</h2>
+        <h2>{{ beer.brewery }} {{ beer.beerName }} <span v-if="beer.degrees">{{ beer.degrees }}°</span></h2>
         <h3>Style: {{ beer.style }}</h3>
-        <h3>Ave Rating: {{ beer.averageRating }}</h3>
-        <h3>Ave Price: {{ beer.averagePrice }}</h3>
+        <h3 v-if="beer.abv">abv: {{ beer.abv }}%</h3>
+        <h3 v-if="beer.averageRating !== 0">Ave Rating: {{ beer.averageRating }}</h3>
+        <h3 v-if="beer.averagePrice !== 0">Ave Price: {{ beer.averagePrice }}</h3>
       </v-layout>
     </v-card-title>
     <v-card-text>

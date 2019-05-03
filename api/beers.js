@@ -35,6 +35,9 @@ const smtpTransport = nodemailer.createTransport({
 // Create new beer
 router.post('/', async (req, res) => {
   try {
+    const checkBeer = await Beer.findOne({ beerName: req.body.beerName, brewery: req.body.brewery })
+    if (checkBeer) return res.status(200).send(checkBeer)
+
     const beer = await new Beer(req.body)
     beer.save((err) => {
       if (err) return res.status(400).send(err)
