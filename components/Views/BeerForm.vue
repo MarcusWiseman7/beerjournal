@@ -140,13 +140,14 @@ export default {
             this.loading = false
           }
         } else {
-          // Post new temp beer to user
-          this.$axios.post(`/beers/tempBeer/${this.userId}`, {
+          // Post new temp beer
+          this.$axios.post('/beers', {
             beerName: this.beerName,
             brewery: this.brewery,
             style: this.style,
             degrees: this.degrees,
-            abv: this.abv
+            abv: this.abv,
+            tempBeer: true
           })
             .then((res) => {
               this.loading = false

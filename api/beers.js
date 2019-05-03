@@ -2,12 +2,19 @@
 const fs = require('fs')
 const path = require('path')
 const express = require('express')
+const nodemailer = require('nodemailer')
 
 // eslint-disable-next-line no-unused-vars
 const { mongoose } = require('../db/mongoose')
 const { Beer } = require('../models/beer')
 
 const router = express.Router()
+
+// Nodemailer transport
+const smtpTransport = nodemailer.createTransport({
+  host: 'smtp.office365.com',
+  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'mmOUXH6lSwhTX0ZJ' }
+})
 
 // sort breweries
 router.get('/sort', async (req, res) => {
@@ -28,11 +35,30 @@ router.get('/sort', async (req, res) => {
 // Create new beer
 router.post('/', async (req, res) => {
   try {
-    await new Beer(req.body).save((err) => {
+    const beer = await new Beer(req.body)
+    beer.save((err) => {
       if (err) return res.status(400).send(err)
     })
 
-    res.status(200).send()
+    if (beer.tempBeer) {
+      const mailOptions = {
+        to: 'marcus.wiseman@wisemanjech.com',
+        from: '<no-reply.beerjournal@outlook.com>',
+        subject: 'New Temp Beer',
+        text:
+          `Beer name: ${beer.beerName} \n\n` +
+          `Brewery: ${beer.brewery} \n\n` +
+          `Style: ${beer.style} \n\n` +
+          `Degrees: ${beer.degrees} \n\n` +
+          `Abv: ${beer.abv}` +
+          `Beer ID: ${beer._id}`
+      }
+      smtpTransport.sendMail(mailOptions, (err) => {
+        if (err) return { err: 412 }
+      })
+    }
+
+    res.status(200).send(beer)
   } catch (err) {
     return res.status(400).send(err)
   }
@@ -41,7 +67,7 @@ router.post('/', async (req, res) => {
 // Retrieve all beers
 router.get('/allBeers', async (req, res) => {
   try {
-    const beers = await Beer.find()
+    const beers = await Beer.find({ tempBeer: false })
       .select('_id beerName brewery style degrees abv averagePrice averageRating')
     if (!beers) return res.status(404).send()
 

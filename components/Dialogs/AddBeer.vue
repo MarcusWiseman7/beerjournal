@@ -88,16 +88,16 @@
 
 <script>
 import beerStyles from '~/data/beerStyles.json'
-import breweries from '~/data/breweries.json'
-import beerNames from '~/data/beerNames.json'
+import preloadedBreweries from '~/data/breweries.json'
+import preloadedBeerNames from '~/data/beerNames.json'
 
 export default {
   name: 'AddBeer',
   data() {
     return {
       beerStyles,
-      breweries,
-      beerNames,
+      preloadedBreweries,
+      preloadedBeerNames,
       loading: false,
       beer: {
         beerName: '',
@@ -109,6 +109,14 @@ export default {
     }
   },
   computed: {
+    breweries() {
+      const loadedBreweries = this.$store.state.beers.map(x => x.brewery)
+      return loadedBreweries.concat(this.preloadedBreweries).sort((a, b) => a.localeCompare(b))
+    },
+    beerNames() {
+      const loadedBeerNames = this.$store.state.beers.map(x => x.beerName)
+      return loadedBeerNames.concat(this.preloadedBeerNames).sort((a, b) => a.localeCompare(b))
+    },
     rules() { return this.$store.state.rules },
     beerNameItems() { return this.$store.state.beers.map(x => x.beerName) }
   },

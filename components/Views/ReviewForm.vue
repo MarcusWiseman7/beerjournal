@@ -66,7 +66,7 @@
         v-if="beerReview._id"
         small
         color="error"
-        @click.native="onDelete()"
+        @click.native="onCheckDelete = true"
       >Delete</v-btn>
       <v-btn
         small
@@ -79,6 +79,25 @@
         @click.native="onSubmit()"
       >Submit</v-btn>
     </v-card-actions>
+    <v-dialog
+      v-model="onCheckDelete"
+      max-width="450"
+      persistent
+    >
+      <v-card>
+        <v-card-title>
+          <h1>Do you really want to delete these beer notes?</h1>
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click.native="onCheckDelete = false">Cancel</v-btn>
+          <v-btn
+            color="error"
+            @click.native="onDelete()"
+          >Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -89,7 +108,8 @@ export default {
   name: 'ReviewForm',
   data() {
     return {
-      loading: false
+      loading: false,
+      onCheckDelete: false
     }
   },
   computed: {
