@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-const fs = require('fs')
-const path = require('path')
+// const fs = require('fs')
+// const path = require('path')
 const express = require('express')
 const nodemailer = require('nodemailer')
 
@@ -17,20 +17,20 @@ const smtpTransport = nodemailer.createTransport({
 })
 
 // sort breweries
-router.get('/sort', async (req, res) => {
-  try {
-    let list = await JSON.parse(fs.readFileSync(path.join(__dirname, '../data/sorted.json'), 'utf8'))
+// router.get('/sort', async (req, res) => {
+//   try {
+//     let list = await JSON.parse(fs.readFileSync(path.join(__dirname, '../data/sorted.json'), 'utf8'))
 
-    list = await list.sort((a, b) => {
-      return a.localeCompare(b)
-    })
-    await fs.writeFileSync(path.join(__dirname, '../data/breweries.json'), JSON.stringify(list), 'utf8')
+//     list = await list.sort((a, b) => {
+//       return a.localeCompare(b)
+//     })
+//     await fs.writeFileSync(path.join(__dirname, '../data/breweries.json'), JSON.stringify(list), 'utf8')
 
-    res.status(200).send()
-  } catch {
-    return res.status(400).send()
-  }
-})
+//     res.status(200).send()
+//   } catch {
+//     return res.status(400).send()
+//   }
+// })
 
 // Create new beer
 router.post('/', async (req, res) => {
