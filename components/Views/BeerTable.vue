@@ -42,7 +42,7 @@
         sort-icon="arrow_drop_down"
         prev-icon="arrow_left"
         next-icon="arrow_right"
-        hide-actions
+        :hide-actions="hideActions"
       >
         <template
           v-if="title === 'Beers'"
@@ -53,7 +53,10 @@
               v-if="props.item.averageRating !== 0"
               class="text-xs-right"
             >{{ props.item.averageRating }}</td>
-            <td v-else>N/A</td>
+            <td
+              v-else
+              class="text-xs-right"
+            >-</td>
             <td><span style="color:#FFA000">{{ props.item.beerName }}</span></td>
             <td>{{ props.item.brewery }}</td>
           </tr>
@@ -96,9 +99,9 @@ export default {
     }
   },
   computed: {
-    // myBeerList() {
-    //   return this.items.map(x => x._id)
-    // },
+    hideActions() {
+      return !(this.items.length && this.items.length > 5)
+    },
     headers() {
       return this.title === 'Beers'
         ? [
