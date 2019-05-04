@@ -49,7 +49,11 @@
           v-slot:items="props"
         >
           <tr @click="reviewBeer(props.item)">
-            <td class="text-xs-right">{{ props.item.averageRating }}</td>
+            <td
+              v-if="props.item.averageRating !== 0"
+              class="text-xs-right"
+            >{{ props.item.averageRating }}</td>
+            <td v-else>N/A</td>
             <td><span style="color:#FFA000">{{ props.item.beerName }}</span></td>
             <td>{{ props.item.brewery }}</td>
           </tr>
