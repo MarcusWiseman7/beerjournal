@@ -32,14 +32,14 @@
               label="Brewery"
               required
             ></v-combobox>
-            <v-select
+            <v-combobox
               v-model="beer.style"
               :rules="[rules.required]"
               :items="beerStyles"
               append-icon="arrow_drop_down"
               label="Style"
               required
-            ></v-select>
+            ></v-combobox>
             <h3 class="mb-5">Degrees</h3>
             <v-slider
               v-model="beer.degrees"
