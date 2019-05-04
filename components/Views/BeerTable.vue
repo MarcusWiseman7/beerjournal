@@ -49,16 +49,10 @@
           v-slot:items="props"
         >
           <tr @click="reviewBeer(props.item)">
-            <td
-              v-if="props.item.averageRating !== 0"
-              class="text-xs-right"
-            >{{ props.item.averageRating }}</td>
-            <td
-              v-else
-              class="text-xs-right"
-            >-</td>
-            <td><span style="color:#FFA000">{{ props.item.beerName }}</span></td>
             <td>{{ props.item.brewery }}</td>
+            <td><span style="color:#FFA000">{{ props.item.beerName }}</span></td>
+            <td v-if="props.item.averageRating !== 0">{{ props.item.averageRating }}</td>
+            <td v-else>-</td>
           </tr>
         </template>
         <template
@@ -66,9 +60,9 @@
           v-slot:items="props"
         >
           <tr @click="reviewBeer(props.item)">
-            <td class="text-xs-right">{{ props.item.rating }}</td>
-            <td><span style="color:#FFA000">{{ props.item.beer.beerName }}</span></td>
             <td>{{ props.item.beer.brewery }}</td>
+            <td><span style="color:#FFA000">{{ props.item.beer.beerName }}</span></td>
+            <td>{{ props.item.rating }}</td>
           </tr>
         </template>
         <v-alert
@@ -105,14 +99,14 @@ export default {
     headers() {
       return this.title === 'Beers'
         ? [
-          { text: 'Ave Rating', value: 'averageRating' },
+          { text: 'Brewery', value: 'brewery' },
           { text: 'Beer', value: 'beerName' },
-          { text: 'Brewery', value: 'brewery' }
+          { text: 'Ave Rating', value: 'averageRating' }
         ]
         : [
-          { text: 'Rating', value: 'rating' },
+          { text: 'Brewery', value: 'beer.brewery' },
           { text: 'Beer', value: 'beer.beerName' },
-          { text: 'Brewery', value: 'beer.brewery' }
+          { text: 'Rating', value: 'rating' }
         ]
     }
   },
