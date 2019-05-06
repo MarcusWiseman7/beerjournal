@@ -1,16 +1,19 @@
 <template>
   <v-app :dark="darkMode">
     <my-header />
+    <my-spinner :loading="$store.state.loading" />
     <nuxt />
   </v-app>
 </template>
 
 <script>
 import MyHeader from '~/components/UI/MyHeader'
+import MySpinner from '~/components/UI/MySpinner'
 
 export default {
   components: {
-    MyHeader
+    MyHeader,
+    MySpinner
   },
   computed: {
     darkMode() {
@@ -21,8 +24,17 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-h1, h2, h3 {
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: normal;
+}
+
+h1 {
+  color: #ffa000;
 }
 </style>

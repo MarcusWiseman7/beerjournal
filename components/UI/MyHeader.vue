@@ -1,6 +1,5 @@
 <template>
   <div>
-    <my-spinner :loading="loading" />
     <v-toolbar height="180">
       <v-container>
         <v-layout justify-end>
@@ -10,7 +9,7 @@
           align-center
           wrap
         >
-          <h1 class="mr-2"><span style="color:#FFA000">Beer</span>Journal</h1>
+          <h1 class="mr-2">Beer<span>Journal</span></h1>
           <v-icon large>fa fa-beer</v-icon>
           <v-spacer></v-spacer>
           <div v-if="isAdmin">
@@ -25,13 +24,13 @@
                 </v-avatar>
               </template>
               <v-list>
-                <v-list-tile @click.native="$store.commit('toggleEditProfile')">
+                <v-list-tile @click.native="$store.commit('toggle', 'editProfileDialog')">
                   <v-list-tile-title>Profile</v-list-tile-title>
                 </v-list-tile>
-                <v-list-tile @click.native="$store.commit('toggleChangePassword')">
+                <v-list-tile @click.native="$store.commit('toggle', 'changePasswordDialog')">
                   <v-list-tile-title>Change Password</v-list-tile-title>
                 </v-list-tile>
-                <v-list-tile @click.native="onLogout">
+                <v-list-tile @click.native="onLogout()">
                   <v-list-tile-title>Logout</v-list-tile-title>
                 </v-list-tile>
               </v-list>
@@ -51,11 +50,6 @@ export default {
   components: {
     MyAuth
   },
-  data() {
-    return {
-      loading: false
-    }
-  },
   computed: {
     isAdmin() {
       return this.$store.state.auth.loggedIn
@@ -66,23 +60,23 @@ export default {
   },
   methods: {
     onLogout() {
-      this.loading = true
+      this.$store.commit('toggle', 'loading')
       this.$auth
         .logout({
           data: { id: this.$store.state.auth.user._id }
         })
         .then(() => {
-          this.loading = false
+          this.$store.commit('toggle', 'loading')
         })
         .catch(() => {
-          this.loading = false
+          this.$store.commit('toggle', 'loading')
         })
     }
   }
 }
 </script>
 
-<style lang="stylus" scoped>
+<style scoped>
 h1 {
   font-weight: lighter;
   font-size: 2.5rem;

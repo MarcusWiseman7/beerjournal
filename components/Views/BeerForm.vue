@@ -1,8 +1,7 @@
 <template>
   <div>
-    <my-spinner :loading="loading" />
     <v-card-title>
-      <h1 style="color:#FFA000">Beer</h1>
+      <h1>Beer</h1>
     </v-card-title>
     <v-card-text>
       <v-form
@@ -43,10 +42,10 @@
           max="25"
         >
           <template v-slot:prepend>
-            <v-icon @click.native="decDegrees">remove</v-icon>
+            <v-icon @click.native="decDegrees()">remove</v-icon>
           </template>
           <template v-slot:append>
-            <v-icon @click.native="incDegrees">add</v-icon>
+            <v-icon @click.native="incDegrees()">add</v-icon>
           </template>
         </v-slider>
         <h3 class="mb-5">ABV</h3>
@@ -59,10 +58,10 @@
           max="14"
         >
           <template v-slot:prepend>
-            <v-icon @click.native="decAbv">remove</v-icon>
+            <v-icon @click.native="decAbv()">remove</v-icon>
           </template>
           <template v-slot:append>
-            <v-icon @click.native="incAbv">add</v-icon>
+            <v-icon @click.native="incAbv()">add</v-icon>
           </template>
         </v-slider>
       </v-form>
@@ -90,7 +89,6 @@ export default {
   name: 'BeerForm',
   data() {
     return {
-      loading: false,
       beerStyles
     }
   },
@@ -127,17 +125,17 @@ export default {
   methods: {
     onSelect() {
       if (this.$refs.form.validate()) {
-        this.loading = true
+        this.$store.commit('toggle', 'loading')
         const beer = this.$store.state.beers.filter(x => x.brewery === this.selectBeerBrewery)
           .find(x => x.beerName === this.selectBeer)
         if (beer) {
           const reviews = this.$store.state.auth.user.reviews
           if (reviews.map(x => x.beer._id).includes(beer._id)) {
             this.$store.commit('setReview', reviews[reviews.findIndex(x => x.beer._id === beer._id)])
-            this.loading = false
+            this.$store.commit('toggle', 'loading')
           } else {
             this.beer = beer
-            this.loading = false
+            this.$store.commit('toggle', 'loading')
           }
         } else {
           // Post new temp beer
@@ -150,11 +148,11 @@ export default {
             tempBeer: true
           })
             .then((res) => {
-              this.loading = false
+              this.$store.commit('toggle', 'loading')
               this.$store.commit('setReview', { beer: res.data })
             })
             .catch(() => {
-              this.loading = false
+              this.$store.commit('toggle', 'loading')
               this.$toast.error('Error adding beer, please try again', { duration: 4000 })
             })
         }
@@ -170,5 +168,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus" scoped></style>

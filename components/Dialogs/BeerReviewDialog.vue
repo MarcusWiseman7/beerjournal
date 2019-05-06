@@ -1,16 +1,15 @@
 <template>
-  <div>
-    <v-dialog
-      v-model="$store.state.beerReviewDialog"
-      max-width="450"
-      persistent
-    >
-      <v-card>
-        <beer-form v-show="!selectBeer"></beer-form>
-        <review-form v-show="selectBeer"></review-form>
-      </v-card>
-    </v-dialog>
-  </div>
+  <v-dialog
+    v-model="$store.state.beerReviewDialog"
+    max-width="450"
+    :fullscreen="$vuetify.breakpoint.xsOnly"
+    persistent
+  >
+    <v-card>
+      <beer-form v-show="!selectBeer"></beer-form>
+      <review-form v-show="selectBeer"></review-form>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>

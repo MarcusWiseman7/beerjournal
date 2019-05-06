@@ -1,81 +1,75 @@
 <template>
-  <div>
-    <my-spinner :loading="loading" />
-    <v-card>
-      <v-card-title>
-        <v-layout column>
-          <v-layout wrap>
-            <h1
-              class="ml-2"
-              style="color:#FFA000"
-            >{{ title }}</h1>
-            <v-spacer></v-spacer>
-            <v-btn
-              v-if="title === 'My Beers'"
-              fab
-              color="primary"
-              top
-              right
-              absolute
-              @click.native="toggleBeerReview"
-            >
-              <v-icon>add</v-icon>
-            </v-btn>
-            <v-btn
-              v-if="$store.state.auth.loggedIn && title === 'Beers' && $store.state.auth.user.email === 'md.wiseman@hotmail.com'"
-              @click.native="$store.commit('toggleAddBeer')"
-            >Add Beer</v-btn>
-          </v-layout>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="Search"
-            single-line
-            hide-details
-          ></v-text-field>
+  <v-card>
+    <v-card-title>
+      <v-layout column>
+        <v-layout wrap>
+          <h1 class="ml-2">{{ title }}</h1>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-if="title === 'My Beers'"
+            fab
+            color="primary"
+            top
+            right
+            absolute
+            @click.native="toggleBeerReview()"
+          >
+            <v-icon>add</v-icon>
+          </v-btn>
+          <v-btn
+            v-if="$store.state.auth.loggedIn && title === 'Beers' && $store.state.auth.user.email === 'md.wiseman@hotmail.com'"
+            @click.native="$store.commit('toggle', 'addBeerDialog')"
+          >Add Beer</v-btn>
         </v-layout>
-      </v-card-title>
-      <v-data-table
-        :headers="headers"
-        :items="items"
-        :search="search"
-        sort-icon="arrow_drop_down"
-        prev-icon="arrow_left"
-        next-icon="arrow_right"
-        :hide-actions="hideActions"
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+      </v-layout>
+    </v-card-title>
+    <v-data-table
+      :headers="headers"
+      :items="items"
+      :search="search"
+      sort-icon="arrow_drop_down"
+      prev-icon="arrow_left"
+      next-icon="arrow_right"
+      :hide-actions="hideActions"
+    >
+      <template
+        v-if="title === 'Beers'"
+        v-slot:items="props"
       >
-        <template
-          v-if="title === 'Beers'"
-          v-slot:items="props"
-        >
-          <tr @click="reviewBeer(props.item)">
-            <td>{{ props.item.brewery }}</td>
-            <td><span style="color:#FFA000">{{ props.item.beerName }}</span></td>
-            <td v-if="props.item.averageRating !== 0">{{ props.item.averageRating }}</td>
-            <td v-else>-</td>
-          </tr>
-        </template>
-        <template
-          v-else
-          v-slot:items="props"
-        >
-          <tr @click="reviewBeer(props.item)">
-            <td>{{ props.item.beer.brewery }}</td>
-            <td><span style="color:#FFA000">{{ props.item.beer.beerName }}</span></td>
-            <td>{{ props.item.rating }}</td>
-          </tr>
-        </template>
-        <v-alert
-          v-slot:no-results
-          :value="true"
-          color="error"
-          icon="warning"
-        >
-          Your search for "{{ search }}" found no results
-        </v-alert>
-      </v-data-table>
-    </v-card>
-  </div>
+        <tr @click="reviewBeer(props.item)">
+          <td>{{ props.item.brewery }}</td>
+          <td><span>{{ props.item.beerName }}</span></td>
+          <td v-if="props.item.averageRating !== 0">{{ props.item.averageRating }}</td>
+          <td v-else>-</td>
+        </tr>
+      </template>
+      <template
+        v-else
+        v-slot:items="props"
+      >
+        <tr @click="reviewBeer(props.item)">
+          <td>{{ props.item.beer.brewery }}</td>
+          <td><span>{{ props.item.beer.beerName }}</span></td>
+          <td>{{ props.item.rating }}</td>
+        </tr>
+      </template>
+      <v-alert
+        v-slot:no-results
+        :value="true"
+        color="error"
+        icon="warning"
+      >
+        Your search for "{{ search }}" found no results
+      </v-alert>
+    </v-data-table>
+  </v-card>
 </template>
 
 <script>
@@ -86,7 +80,6 @@ export default {
   },
   data() {
     return {
-      loading: false,
       search: '',
       user: {},
       items: []
@@ -128,15 +121,19 @@ export default {
             : { beer }
 
         this.$store.commit('setReview', review)
-        this.$store.commit('toggleBeerReview')
+        this.$store.commit('toggle', 'beerReviewDialog')
       }
     },
     toggleBeerReview() {
       this.$store.commit('resetReview')
-      this.$store.commit('toggleBeerReview')
+      this.$store.commit('toggle', 'beerReviewDialog')
     }
   }
 }
 </script>
 
-<style lang="stylus" scoped></style>
+<style scoped>
+span {
+  color: #ffa000;
+}
+</style>

@@ -1,9 +1,13 @@
 <template>
-  <div>
-    <my-spinner :loading="loading" />
+  <v-dialog
+    v-model="$store.state.editProfileDialog"
+    max-width="450"
+    :fullscreen="$vuetify.breakpoint.xsOnly"
+    persistent
+  >
     <v-card>
       <v-card-title>
-        <h1 style="color:#FFA000">Edit Profile</h1>
+        <h1>Edit Profile</h1>
       </v-card-title>
       <v-card-text>
         <v-form
@@ -65,14 +69,14 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click.native="$store.commit('toggleEditProfile')">Cancel</v-btn>
+        <v-btn @click.native="$store.commit('toggle', 'editProfileDialog')">Cancel</v-btn>
         <v-btn
           color="primary"
-          @click.native="onSubmit"
+          @click.native="onSubmit()"
         >Confirm</v-btn>
       </v-card-actions>
     </v-card>
-  </div>
+  </v-dialog>
 </template>
 
 <script>
@@ -82,7 +86,6 @@ export default {
   name: 'EditProfile',
   data() {
     return {
-      loading: false,
       replaceEmail: false,
       user: {},
       userIcons
@@ -97,18 +100,18 @@ export default {
   methods: {
     onSubmit() {
       if (this.$refs.form.validate()) {
-        this.loading = true
+        this.$store.commit('toggle', 'loading')
         this.$axios.patch(`/users/${this.$store.state.auth.user._id}`, this.user)
           .then((res) => {
             if (res.data.name) {
               this.$store.commit('setUser', res.data)
             }
-            this.loading = false
-            this.$store.commit('toggleEditProfile')
+            this.$store.commit('toggle', 'loading')
+            this.$store.commit('toggle', 'editProfileDialog')
             this.$toast.success('Updated profile', { duration: 4000 })
           })
           .catch(() => {
-            this.loading = false
+            this.$store.commit('toggle', 'loading')
             this.$toast.error('Error updating profile, please try again', { duration: 4000 })
           })
       }
@@ -116,5 +119,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus" scoped></style>

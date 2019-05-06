@@ -2,7 +2,7 @@
   <div>
     <v-card-title>
       <v-layout column>
-        <h1 style="color:#FFA000">Beer Notes</h1>
+        <h1>Beer Notes</h1>
         <h2>{{ beer.brewery }} {{ beer.beerName }} <span v-if="beer.degrees">{{ beer.degrees }}°</span></h2>
         <h3>Style: {{ beer.style }}</h3>
         <h3 v-if="beer.abv">abv: {{ beer.abv }}%</h3>
@@ -25,10 +25,10 @@
           max="5"
         >
           <template v-slot:prepend>
-            <v-icon @click.native="decrement">remove</v-icon>
+            <v-icon @click.native="decrement()">remove</v-icon>
           </template>
           <template v-slot:append>
-            <v-icon @click.native="increment">add</v-icon>
+            <v-icon @click.native="increment()">add</v-icon>
           </template>
         </v-slider>
         <h3 class="mb-5">Price (CZK)</h3>
@@ -40,10 +40,10 @@
           max="150"
         >
           <template v-slot:prepend>
-            <v-icon @click.native="decrement1">remove</v-icon>
+            <v-icon @click.native="decrement1()">remove</v-icon>
           </template>
           <template v-slot:append>
-            <v-icon @click.native="increment1">add</v-icon>
+            <v-icon @click.native="increment1()">add</v-icon>
           </template>
         </v-slider>
         <v-text-field
@@ -87,7 +87,7 @@
     >
       <v-card>
         <v-card-title>
-          <h1>Do you really want to delete these beer notes?</h1>
+          <h2>Do you really want to delete these beer notes?</h2>
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -109,7 +109,6 @@ export default {
   name: 'ReviewForm',
   data() {
     return {
-      loading: false,
       onCheckDelete: false
     }
   },
@@ -145,7 +144,7 @@ export default {
   methods: {
     onSubmit() {
       if (this.$refs.form.validate()) {
-        this.loading = true
+        this.$store.commit('toggle', 'loading')
         const body = {
           price: this.price,
           location: this.location,
@@ -156,43 +155,43 @@ export default {
         if (!this._id) {
           this.$axios.post(`/reviews/${this.userId}`, body)
             .then((res) => {
-              this.loading = false
+              this.$store.commit('toggle', 'loading')
               this.$store.commit('setUser', res.data)
               this.$store.dispatch('getBeers')
               this.onCancel()
               this.$toast.success('Added beer review', { duration: 4000 })
             })
             .catch(() => {
-              this.loading = false
+              this.$store.commit('toggle', 'loading')
               this.$toast.error('Error adding beer review, please try again', { duration: 4000 })
             })
         } else {
           body.userId = this.userId
           this.$axios.patch(`/reviews/${this._id}`, body)
             .then((res) => {
-              this.loading = false
+              this.$store.commit('toggle', 'loading')
               this.$store.commit('setUser', res.data)
               this.onCancel()
               this.$toast.success('Updated beer review', { duration: 4000 })
             })
             .catch(() => {
-              this.loading = false
+              this.$store.commit('toggle', 'loading')
               this.$toast.error('Error updating beer review, please try again', { duration: 4000 })
             })
         }
       }
     },
     onDelete() {
-      this.loading = true
+      this.$store.commit('toggle', 'loading')
       this.$axios.delete(`/reviews/${this._id}/${this.userId}`)
         .then((res) => {
-          this.loading = false
+          this.$store.commit('toggle', 'loading')
           this.$store.commit('setUser', res.data)
           this.onCancel()
           this.$toast.success('Deleted beer review', { duration: 4000 })
         })
         .catch(() => {
-          this.loading = false
+          this.$store.commit('toggle', 'loading')
           this.$toast.error('Error deleting beer review, please try again', { duration: 4000 })
         })
     },

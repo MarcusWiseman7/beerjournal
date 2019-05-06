@@ -1,5 +1,6 @@
 export const state = () => ({
   beers: [],
+  loading: false,
   counter: 0,
   counter1: 1000,
   beerReview: {
@@ -19,9 +20,9 @@ export const state = () => ({
   },
   addBeerDialog: false,
   beerReviewDialog: false,
-  editBeer: false,
-  editProfile: false,
-  changePassword: false,
+  editBeerDialog: false,
+  editProfileDialog: false,
+  changePasswordDialog: false,
   rules: {
     required: v => !!v || 'This is required',
     min: v => (v && v.length >= 6) || 'Min 6 characters',
@@ -61,11 +62,7 @@ export const mutations = {
       abv: 3
     }
   },
-  toggleAddBeer(state) { state.addBeerDialog = !state.addBeerDialog },
-  toggleEditBeer(state) { state.editBeer = !state.editBeer },
-  toggleBeerReview(state) { state.beerReviewDialog = !state.beerReviewDialog },
-  toggleEditProfile(state) { state.editProfile = !state.editProfile },
-  toggleChangePassword(state) { state.changePassword = !state.changePassword }
+  toggle(state, item) { state[item] = !state[item] }
 }
 
 export const actions = {
@@ -79,7 +76,7 @@ export const actions = {
     commit('incCounter1')
   },
   onCancelReview({ commit }) {
-    commit('toggleBeerReview')
+    commit('toggle', 'beerReviewDialog')
     commit('resetReview')
     commit('resetSelectBeer')
   }

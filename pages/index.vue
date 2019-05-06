@@ -1,51 +1,48 @@
 <template>
-  <div>
-    <v-container v-if="isAdmin">
-      <v-layout justify-center>
-        <h3>hi, {{ $store.state.auth.user.name }}!</h3>
-      </v-layout>
-    </v-container>
-    <edit-profile
-      v-if="$store.state.editProfile"
-      class="mb-5"
-    />
-    <change-password
-      v-if="$store.state.changePassword"
-      class="mb-5"
-    />
-    <beer-table
-      v-if="isAdmin"
-      :key="$store.state.counter"
-      class="mb-3"
-      title="My Beers"
-    />
+  <v-container class="my-container">
+    <div v-if="$store.state.auth.loggedIn">
+      <h3 class="my-3 text-xs-center">Hi, {{ $store.state.auth.user.name }}!</h3>
+      <beer-table
+        :key="$store.state.counter"
+        class="mb-3"
+        title="My Beers"
+      />
+      <edit-profile-dialog />
+      <change-password-dialog />
+      <add-beer-dialog />
+      <beer-review-dialog />
+    </div>
     <beer-table
       :key="$store.state.counter1"
       title="Beers"
     />
-    <add-beer />
-    <beer-review />
-  </div>
+  </v-container>
 </template>
 
 <script>
-import AddBeer from '~/components/Dialogs/AddBeer'
-import EditProfile from '~/components/Views/EditProfile'
-import ChangePassword from '~/components/Views/ChangePassword'
+import AddBeerDialog from '~/components/Dialogs/AddBeerDialog'
+import EditProfileDialog from '~/components/Dialogs/EditProfileDialog'
+import ChangePasswordDialog from '~/components/Dialogs/ChangePasswordDialog'
 import BeerTable from '~/components/Views/BeerTable'
-import BeerReview from '~/components/Dialogs/BeerReview'
+import BeerReviewDialog from '~/components/Dialogs/BeerReviewDialog'
 
 export default {
+  name: 'Index',
   auth: false,
   components: {
-    AddBeer,
-    EditProfile,
-    ChangePassword,
+    AddBeerDialog,
+    EditProfileDialog,
+    ChangePasswordDialog,
     BeerTable,
-    BeerReview
-  },
-  computed: {
-    isAdmin() { return this.$store.state.auth.loggedIn }
+    BeerReviewDialog
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+@media only screen and (max-width: 600px) {
+  .my-container {
+    padding: 0;
+  }
+}
+</style>
