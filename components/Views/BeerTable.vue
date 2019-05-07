@@ -45,14 +45,14 @@
       >
         <tr @click="reviewBeer(props.item)">
           <td class="my-row-item">{{ props.item.brewery }}</td>
-          <td class="my-row-item"><span>{{ props.item.beerName }}</span></td>
+          <td class="my-row-item-beer"><span>{{ props.item.beerName }}</span></td>
           <td
             v-if="props.item.averageRating !== 0"
-            class="my-row-item my-row-item-rating"
+            class="my-row-item-rating"
           >{{ props.item.averageRating }}</td>
           <td
             v-else
-            class="my-row-item my-row-item-rating"
+            class="my-row-item-rating"
           >-</td>
         </tr>
       </template>
@@ -62,8 +62,8 @@
       >
         <tr @click="reviewBeer(props.item)">
           <td class="my-row-item">{{ props.item.beer.brewery }}</td>
-          <td class="my-row-item"><span>{{ props.item.beer.beerName }}</span></td>
-          <td class="my-row-item my-row-item-rating">{{ props.item.rating }}</td>
+          <td class="my-row-item-beer"><span>{{ props.item.beer.beerName }}</span></td>
+          <td class="my-row-item-rating">{{ props.item.rating }}</td>
         </tr>
       </template>
       <v-alert
@@ -98,14 +98,14 @@ export default {
     headers() {
       return this.title === 'Beers'
         ? [
-          { text: 'Brewery', value: 'brewery', width: '40vw' },
-          { text: 'Beer', value: 'beerName', width: '40vw' },
-          { text: 'Ave Rating', value: 'averageRating', width: '15vw' }
+          { text: 'Brewery', value: 'brewery' },
+          { text: 'Beer', value: 'beerName' },
+          { text: 'Average', value: 'averageRating' }
         ]
         : [
-          { text: 'Brewery', value: 'beer.brewery', width: '40vw' },
-          { text: 'Beer', value: 'beer.beerName', width: '40vw' },
-          { text: 'Rating', value: 'rating', width: '15vw' }
+          { text: 'Brewery', value: 'beer.brewery' },
+          { text: 'Beer', value: 'beer.beerName' },
+          { text: 'Rating', value: 'rating' }
         ]
     }
   },
@@ -144,11 +144,16 @@ span {
 }
 
 .my-row-item {
+  max-width: 30vw;
+  overflow-wrap: break-word;
+}
+
+.my-row-item-beer {
   max-width: 40vw;
   overflow-wrap: break-word;
 }
 
 .my-row-item-rating {
-  max-width: 15vw;
+  max-width: 30vw;
 }
 </style>
