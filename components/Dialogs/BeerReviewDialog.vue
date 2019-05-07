@@ -6,6 +6,7 @@
     persistent
   >
     <v-card>
+      <beer-banner />
       <beer-form v-show="!selectBeer"></beer-form>
       <review-form v-show="selectBeer"></review-form>
     </v-card>

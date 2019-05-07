@@ -40,6 +40,7 @@ module.exports = {
    */
   plugins: [
     '~/plugins/vuetify',
+    '~/plugins/my-global-components',
     { src: '~/plugins/nuxt-client-init', mode: 'client' }
   ],
 

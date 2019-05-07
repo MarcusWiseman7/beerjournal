@@ -9,7 +9,7 @@
           align-center
           wrap
         >
-          <h1 class="mr-2">Beer<span>Journal</span></h1>
+          <h1 class="mr-2">BeerJournal</h1>
           <v-icon large>fa fa-beer</v-icon>
           <v-spacer></v-spacer>
           <div v-if="isAdmin">

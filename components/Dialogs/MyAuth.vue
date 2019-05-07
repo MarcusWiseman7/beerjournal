@@ -12,6 +12,7 @@
       >Login/Sign up</v-btn>
     </template>
     <v-card>
+      <beer-banner />
       <v-card-title>
         <h1>{{ title }}</h1>
       </v-card-title>

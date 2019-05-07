@@ -6,6 +6,7 @@
     persistent
   >
     <v-card>
+      <beer-banner />
       <v-card-title>
         <h1>Edit Profile</h1>
       </v-card-title>
