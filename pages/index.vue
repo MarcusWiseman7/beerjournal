@@ -7,10 +7,16 @@
         class="mb-3"
         title="My Beers"
       />
+      <beer-table
+        v-if="this.$store.state.auth.user.email === 'md.wiseman@hotmail.com'"
+        class="mb-3"
+        title="Temp Beers"
+      />
       <edit-profile-dialog />
       <change-password-dialog />
       <add-beer-dialog />
       <beer-review-dialog />
+      <edit-beer-dialog />
     </div>
     <beer-table
       :key="$store.state.counter1"
@@ -25,6 +31,7 @@ import EditProfileDialog from '~/components/Dialogs/EditProfileDialog'
 import ChangePasswordDialog from '~/components/Dialogs/ChangePasswordDialog'
 import BeerTable from '~/components/Views/BeerTable'
 import BeerReviewDialog from '~/components/Dialogs/BeerReviewDialog'
+import EditBeerDialog from '~/components/Dialogs/EditBeerDialog'
 
 export default {
   name: 'Index',
@@ -34,7 +41,8 @@ export default {
     EditProfileDialog,
     ChangePasswordDialog,
     BeerTable,
-    BeerReviewDialog
+    BeerReviewDialog,
+    EditBeerDialog
   }
 }
 </script>

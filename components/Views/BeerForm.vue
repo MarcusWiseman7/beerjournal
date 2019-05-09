@@ -64,6 +64,11 @@
             <v-icon @click.native="incAbv()">add</v-icon>
           </template>
         </v-slider>
+        <v-switch
+          v-if="$store.state.editBeerDialog"
+          v-model="tempBeer"
+          :label="`Temp Beer: ${tempBeer.toString()}`"
+        ></v-switch>
       </v-form>
     </v-card-text>
     <v-card-actions>
@@ -84,16 +89,19 @@
 <script>
 import { mapState } from 'vuex'
 import beerStyles from '~/data/beerStyles.json'
+import preloadedBreweries from '~/data/breweries.json'
 
 export default {
   name: 'BeerForm',
   data() {
     return {
-      beerStyles
+      beerStyles,
+      preloadedBreweries
     }
   },
   computed: {
     ...mapState(['selectBeer']),
+    _id() { return this.selectBeer._id },
     beerName: {
       set(beerName) { this.$store.commit('setSelectBeer', { beerName }) },
       get() { return this.selectBeer.beerName }
@@ -114,47 +122,73 @@ export default {
       set(abv) { this.$store.commit('setSelectBeer', { abv }) },
       get() { return this.selectBeer.abv }
     },
+    tempBeer: {
+      set(tempBeer) { this.$store.commit('setSelectBeer', { tempBeer }) },
+      get() { return this.selectBeer.tempBeer }
+    },
     rules() { return this.$store.state.rules },
     beerNames() {
       return this.$store.state.beers.map(x => x.beerName).sort((a, b) => a.localeCompare(b))
     },
     breweries() {
-      return this.$store.state.beers.map(x => x.brewery).sort((a, b) => a.localeCompare(b))
+      const loadedBreweries = this.$store.state.beers.map(x => x.brewery)
+      return loadedBreweries.concat(this.preloadedBreweries).sort((a, b) => a.localeCompare(b))
     }
   },
   methods: {
     onSelect() {
       if (this.$refs.form.validate()) {
         this.$store.commit('toggle', 'loading')
-        const beer = this.$store.state.beers.filter(x => x.brewery === this.selectBeerBrewery)
-          .find(x => x.beerName === this.selectBeer)
-        if (beer) {
-          const reviews = this.$store.state.auth.user.reviews
-          if (reviews.map(x => x.beer._id).includes(beer._id)) {
-            this.$store.commit('setReview', reviews[reviews.findIndex(x => x.beer._id === beer._id)])
-            this.$store.commit('toggle', 'loading')
-          } else {
-            this.beer = beer
-            this.$store.commit('toggle', 'loading')
-          }
-        } else {
-          // Post new temp beer
-          this.$axios.post('/beers', {
+        if (this.$store.state.editBeerDialog) {
+          this.$axios.patch(`/beers/${this._id}`, {
             beerName: this.beerName,
             brewery: this.brewery,
             style: this.style,
             degrees: this.degrees,
             abv: this.abv,
-            tempBeer: true
+            tempBeer: this.tempBeer
           })
-            .then((res) => {
+            .then(() => {
               this.$store.commit('toggle', 'loading')
-              this.$store.commit('setReview', { beer: res.data })
+              this.$store.dispatch('onCancelReview')
+              this.$store.dispatch('getBeers')
+              this.$toast.success('Updated beer', { duration: 4000 })
             })
             .catch(() => {
               this.$store.commit('toggle', 'loading')
-              this.$toast.error('Error adding beer, please try again', { duration: 4000 })
+              this.$toast.error('Error updating beer', { duration: 4000 })
             })
+        } else {
+          const beer = this.$store.state.beers.filter(x => x.brewery === this.selectBeerBrewery)
+            .find(x => x.beerName === this.selectBeer)
+          if (beer) {
+            const reviews = this.$store.state.auth.user.reviews
+            if (reviews.map(x => x.beer._id).includes(beer._id)) {
+              this.$store.commit('setReview', reviews[reviews.findIndex(x => x.beer._id === beer._id)])
+              this.$store.commit('toggle', 'loading')
+            } else {
+              this.beer = beer
+              this.$store.commit('toggle', 'loading')
+            }
+          } else {
+            // Post new temp beer
+            this.$axios.post('/beers', {
+              beerName: this.beerName,
+              brewery: this.brewery,
+              style: this.style,
+              degrees: this.degrees,
+              abv: this.abv,
+              tempBeer: true
+            })
+              .then((res) => {
+                this.$store.commit('toggle', 'loading')
+                this.$store.commit('setReview', { beer: res.data })
+              })
+              .catch(() => {
+                this.$store.commit('toggle', 'loading')
+                this.$toast.error('Error adding beer, please try again', { duration: 4000 })
+              })
+          }
         }
       }
     },

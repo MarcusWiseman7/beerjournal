@@ -67,6 +67,19 @@ router.post('/', async (req, res) => {
   }
 })
 
+// Retrieve temp beers
+router.get('/tempBeers', async (req, res) => {
+  try {
+    const tempBeers = await Beer.find({ tempBeer: true })
+      .select('_id beerName brewery style degrees abv averagePrice averageRating tempBeer')
+    if (!tempBeers) return res.status(404).send()
+
+    res.status(200).send(tempBeers)
+  } catch (err) {
+    return res.status(400).send(err)
+  }
+})
+
 // Retrieve all beers
 router.get('/allBeers', async (req, res) => {
   try {

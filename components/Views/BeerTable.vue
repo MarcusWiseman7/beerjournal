@@ -57,13 +57,23 @@
         </tr>
       </template>
       <template
-        v-else
+        v-else-if="title === 'My Beers'"
         v-slot:items="props"
       >
         <tr @click="reviewBeer(props.item)">
           <td class="my-row-item">{{ props.item.beer.brewery }}</td>
           <td class="my-row-item-beer"><span>{{ props.item.beer.beerName }}</span></td>
           <td class="my-row-item-rating">{{ props.item.rating }}</td>
+        </tr>
+      </template>
+      <template
+        v-else
+        v-slot:items="props"
+      >
+        <tr @click="editBeer(props.item)">
+          <td class="my-row-item">{{ props.item.brewery }}</td>
+          <td class="my-row-item-beer">{{ props.item.beerName }}</td>
+          <td class="my-row-item-rating">{{ props.item.degrees }}°/{{ props.item.abv }}%</td>
         </tr>
       </template>
       <v-alert
@@ -102,21 +112,35 @@ export default {
           { text: 'Beer', value: 'beerName' },
           { text: 'Average', value: 'averageRating' }
         ]
-        : [
-          { text: 'Brewery', value: 'beer.brewery' },
-          { text: 'Beer', value: 'beer.beerName' },
-          { text: 'Rating', value: 'rating' }
-        ]
+        : this.title === 'My Beers'
+          ? [
+            { text: 'Brewery', value: 'beer.brewery' },
+            { text: 'Beer', value: 'beer.beerName' },
+            { text: 'Rating', value: 'rating' }
+          ]
+          : [
+            { text: 'Brewery', value: 'brewery' },
+            { text: 'Beer', value: 'beerName' },
+            { text: 'Info', value: 'degrees' }
+          ]
     }
   },
-  created() {
+  async created() {
     if (this.title === 'My Beers') {
       this.items = this.$store.state.auth.user.reviews
-    } else {
+    } else if (this.title === 'Beers') {
       this.items = this.$store.state.beers
+    } else {
+      this.items = await this.$axios.get('/beers/tempBeers')
+        .then(res => res.data)
+        .catch(() => this.$toast.error('Error getting temp beers', { duration: 4000 }))
     }
   },
   methods: {
+    editBeer(beer) {
+      this.$store.commit('setSelectBeer', beer)
+      this.$store.commit('toggle', 'editBeerDialog')
+    },
     reviewBeer(beer) {
       if (this.$store.state.auth.loggedIn) {
         const reviews = this.$store.state.auth.user.reviews

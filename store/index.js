@@ -2,7 +2,7 @@ export const state = () => ({
   beers: [],
   loading: false,
   counter: 0,
-  counter1: 1000,
+  counter1: 10000,
   beerReview: {
     _id: '',
     rating: 1,
@@ -62,7 +62,8 @@ export const mutations = {
       abv: 3
     }
   },
-  toggle(state, item) { state[item] = !state[item] }
+  toggle(state, item) { state[item] = !state[item] },
+  truthy(state, params) { state[params.item] = params.bool }
 }
 
 export const actions = {
@@ -76,7 +77,8 @@ export const actions = {
     commit('incCounter1')
   },
   onCancelReview({ commit }) {
-    commit('toggle', 'beerReviewDialog')
+    commit('truthy', { item: 'beerReviewDialog', bool: false })
+    commit('truthy', { item: 'editBeerDialog', bool: false })
     commit('resetReview')
     commit('resetSelectBeer')
   }
