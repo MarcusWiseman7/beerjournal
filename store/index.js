@@ -18,6 +18,7 @@ export const state = () => ({
     degrees: 4,
     abv: 3
   },
+  myBeerList: false,
   addBeerDialog: false,
   beerReviewDialog: false,
   editBeerDialog: false,
@@ -28,7 +29,7 @@ export const state = () => ({
     min: v => (v && v.length >= 6) || 'Min 6 characters',
     max: v => (v && v.length <= 75) || 'Max 75 characters',
     email: (v) => {
-      const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      const pattern = /\S+@\S+\.\S+/
       return pattern.test(v) || 'Invalid email'
     }
   }

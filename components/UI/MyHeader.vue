@@ -24,6 +24,9 @@
                 </v-avatar>
               </template>
               <v-list>
+                <v-list-tile @click.native="$store.commit('toggle', 'myBeerList')">
+                  <v-list-tile-title>My Beer List</v-list-tile-title>
+                </v-list-tile>
                 <v-list-tile @click.native="$store.commit('toggle', 'editProfileDialog')">
                   <v-list-tile-title>Profile</v-list-tile-title>
                 </v-list-tile>

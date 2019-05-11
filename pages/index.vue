@@ -3,6 +3,7 @@
     <div v-if="$store.state.auth.loggedIn">
       <h3 class="my-3 text-xs-center">Hi, {{ $store.state.auth.user.name }}!</h3>
       <beer-table
+        v-if="this.$store.state.myBeerList"
         :key="$store.state.counter"
         class="mb-3"
         title="My Beers"
