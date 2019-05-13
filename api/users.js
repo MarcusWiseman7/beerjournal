@@ -13,7 +13,7 @@ const router = express.Router()
 // Nodemailer transport
 const smtpTransport = nodemailer.createTransport({
   host: 'smtp.office365.com',
-  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'mmOUXH6lSwhTX0ZJ' }
+  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'QhaB38OwEbSB2c5v' }
 })
 
 const verifyUserEmail = (params) => {
