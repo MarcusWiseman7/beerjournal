@@ -18,6 +18,7 @@ export const state = () => ({
     degrees: 4,
     abv: 3
   },
+  beerInfo: false,
   myBeerList: false,
   addBeerDialog: false,
   beerReviewDialog: false,
@@ -80,6 +81,7 @@ export const actions = {
   onCancelReview({ commit }) {
     commit('truthy', { item: 'beerReviewDialog', bool: false })
     commit('truthy', { item: 'editBeerDialog', bool: false })
+    commit('truthy', { item: 'beerInfo', bool: false })
     commit('resetReview')
     commit('resetSelectBeer')
   }

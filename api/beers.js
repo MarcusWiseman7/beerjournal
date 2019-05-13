@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
 router.get('/tempBeers', async (req, res) => {
   try {
     const tempBeers = await Beer.find({ tempBeer: true })
-      .select('_id beerName brewery style degrees abv averagePrice averageRating tempBeer')
+      .select('_id beerName brewery style degrees abv tempBeer description')
     if (!tempBeers) return res.status(404).send()
 
     res.status(200).send(tempBeers)
@@ -84,7 +84,7 @@ router.get('/tempBeers', async (req, res) => {
 router.get('/allBeers', async (req, res) => {
   try {
     const beers = await Beer.find({ tempBeer: false })
-      .select('_id beerName brewery style degrees abv averagePrice averageRating')
+      .select('_id beerName brewery style degrees abv description averagePrice averageRating totalNumberOfRatings')
     if (!beers) return res.status(404).send()
 
     res.status(200).send(beers)

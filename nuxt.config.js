@@ -51,7 +51,8 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/auth',
-    '@nuxtjs/toast'
+    '@nuxtjs/toast',
+    ['storyblok-nuxt', { accessToken: 'SMAOIQ6ib8VSP9JIoRrQ7wtt', cacheProvider: 'memory' }]
   ],
   /*
    ** Axios module configuration

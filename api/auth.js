@@ -60,7 +60,7 @@ router.get('/user', async (req, res) => {
         select: '-__v -dateCreated',
         populate: {
           path: 'beer',
-          select: '_id beerName brewery style degrees abv averagePrice averageRating'
+          select: '_id beerName brewery style degrees abv description averagePrice averageRating totalNumberOfRatings'
         }
       })
 

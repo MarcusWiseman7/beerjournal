@@ -1,4 +1,3 @@
-
 const express = require('express')
 
 // eslint-disable-next-line no-unused-vars
@@ -14,7 +13,7 @@ const populateParams = {
   select: '-__v -dateCreated',
   populate: {
     path: 'beer',
-    select: '_id beerName brewery style degrees abv averagePrice averageRating'
+    select: '_id beerName brewery style degrees abv description averagePrice averageRating totalNumberOfRatings'
   }
 }
 const averageRound = (a, b, c) => {
@@ -25,6 +24,7 @@ const averageRound = (a, b, c) => {
 // Create new review
 router.post('/:userId', async (req, res) => {
   try {
+    const id = req.params.id
     const review = await new Review(req.body)
     await review.save((err) => {
       if (err) return res.status(400).send(err)
@@ -46,11 +46,7 @@ router.post('/:userId', async (req, res) => {
       if (err) return res.status(400).send(err)
     })
 
-    const user = await User.findByIdAndUpdate(
-      req.params.userId,
-      { $push: { reviews: review._id } },
-      { new: true }
-    )
+    const user = await User.findByIdAndUpdate(id, { $push: { reviews: review._id } }, { new: true })
       .populate(populateParams)
     if (!user) return res.status(404).send()
 
@@ -60,10 +56,26 @@ router.post('/:userId', async (req, res) => {
   }
 })
 
+// Retrieve all reviews for a beer
+router.get('/:beerId', async (req, res) => {
+  try {
+    const reviews = await Review.find({ beer: req.params.beerId })
+      .populate({
+        path: 'reviewer',
+        select: 'name'
+      })
+    if (!reviews) return res.status(404).send()
+
+    res.status(200).send(reviews)
+  } catch (err) {
+    return res.status(400).send(err)
+  }
+})
+
 // Update review
 router.patch('/:id', async (req, res) => {
   try {
-    const userId = req.body.userId
+    const userId = req.body.reviewer
     const beerId = req.body.beer
     const rating = req.body.rating
     const price = req.body.price

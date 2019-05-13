@@ -7,8 +7,11 @@
   >
     <v-card>
       <beer-banner />
-      <beer-form v-show="!selectBeer"></beer-form>
-      <review-form v-show="selectBeer"></review-form>
+      <beer-info v-if="$store.state.beerInfo" />
+      <div v-else>
+        <beer-form v-show="!$store.state.beerReview.beer._id"></beer-form>
+        <review-form v-show="$store.state.beerReview.beer._id"></review-form>
+      </div>
     </v-card>
   </v-dialog>
 </template>
@@ -16,12 +19,14 @@
 <script>
 import BeerForm from '~/components/Views/BeerForm'
 import ReviewForm from '~/components/Views/ReviewForm'
+import BeerInfo from '~/components/Views/BeerInfo'
 
 export default {
   name: 'BeerReview',
   components: {
     BeerForm,
-    ReviewForm
+    ReviewForm,
+    BeerInfo
   },
   computed: {
     selectBeer() { return this.$store.state.beerReview.beer._id }

@@ -150,7 +150,8 @@ export default {
           location: this.location,
           rating: this.rating,
           notes: this.notes,
-          beer: this.beer._id
+          beer: this.beer._id,
+          reviewer: this.userId
         }
         if (!this._id) {
           this.$axios.post(`/reviews/${this.userId}`, body)
@@ -166,7 +167,6 @@ export default {
               this.$toast.error('Error adding beer review, please try again', { duration: 4000 })
             })
         } else {
-          body.userId = this.userId
           this.$axios.patch(`/reviews/${this._id}`, body)
             .then((res) => {
               this.$store.commit('toggle', 'loading')

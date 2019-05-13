@@ -151,6 +151,7 @@ export default {
             : { beer }
 
         this.$store.commit('setReview', review)
+        this.$store.commit('toggle', 'beerInfo')
         this.$store.commit('toggle', 'beerReviewDialog')
       }
     },

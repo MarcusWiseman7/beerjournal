@@ -17,7 +17,7 @@
               <template v-slot:activator="{ on }">
                 <v-avatar
                   tile
-                  color="secondary"
+                  color="primary"
                   v-on="on"
                 >
                   <v-icon large>{{ user.userIcon }}</v-icon>
