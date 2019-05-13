@@ -10,6 +10,7 @@ const auth = require('../api/auth')
 const users = require('../api/users')
 const beers = require('../api/beers')
 const reviews = require('../api/reviews')
+const breweries = require('../api/breweries')
 
 const app = express()
 
@@ -44,6 +45,7 @@ async function start() {
   app.use('/users', users)
   app.use('/beers', beers)
   app.use('/reviews', reviews)
+  app.use('/breweries', breweries)
 
   // Give nuxt middleware to express
   app.use(nuxt.render)

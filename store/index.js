@@ -21,6 +21,7 @@ export const state = () => ({
   beerInfo: false,
   myBeerList: false,
   addBeerDialog: false,
+  addBreweryDialog: false,
   beerReviewDialog: false,
   editBeerDialog: false,
   editProfileDialog: false,

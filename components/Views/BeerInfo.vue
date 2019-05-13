@@ -6,8 +6,8 @@
         align-center
       >
         <v-img
-          :src="beer.logo"
-          lazy-src="lazy-src.jpg"
+          :src="logoSrc"
+          lazy-src="https://res.cloudinary.com/dukumou2e/image/upload/v1557745360/breweries/lazy-src_zpkrwj.jpg"
           alt="Beer logo"
           aspect-ratio="1"
           max-width="20vw"
@@ -109,8 +109,13 @@ export default {
     }
   },
   computed: {
-    beer() {
-      return this.$store.state.beerReview.beer
+    beer() { return this.$store.state.beerReview.beer },
+    logoSrc() {
+      return this.beer.logo
+        ? this.beer.logo
+        : this.beer.brewery.logo
+          ? this.beer.brewery.logo
+          : 'https://res.cloudinary.com/dukumou2e/image/upload/v1557745360/breweries/lazy-src_zpkrwj.jpg'
     }
   },
   async mounted() {

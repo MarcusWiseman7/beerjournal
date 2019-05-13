@@ -91,13 +91,12 @@ import preloadedBreweries from '~/data/breweries.json'
 import preloadedBeerNames from '~/data/beerNames.json'
 
 export default {
-  name: 'AddBeer',
+  name: 'AddBeerDialog',
   data() {
     return {
       beerStyles,
       preloadedBreweries,
       preloadedBeerNames,
-      loading: false,
       beer: {
         beerName: '',
         brewery: '',

@@ -10,6 +10,7 @@ const beerSchema = new mongoose.Schema({
   logo: { type: String, trim: true },
   description: { type: String, trim: true },
   tempBeer: { type: Boolean, default: false },
+  tempBrewery: { type: String, trim: true },
   sumOfAllRatings: { type: Number, default: 0 },
   totalNumberOfRatings: { type: Number, default: 0 },
   averageRating: { type: Number, default: 0 },

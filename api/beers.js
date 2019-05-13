@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer')
 // eslint-disable-next-line no-unused-vars
 const { mongoose } = require('../db/mongoose')
 const { Beer } = require('../models/beer')
+// const { Brewery } = require('../models/brewery')
 
 const router = express.Router()
 
@@ -71,7 +72,8 @@ router.post('/', async (req, res) => {
 router.get('/tempBeers', async (req, res) => {
   try {
     const tempBeers = await Beer.find({ tempBeer: true })
-      .select('_id beerName brewery style degrees abv tempBeer description')
+      .select('_id beerName brewery style degrees abv logo tempBeer description')
+      // .populate('brewery')
     if (!tempBeers) return res.status(404).send()
 
     res.status(200).send(tempBeers)
@@ -84,7 +86,7 @@ router.get('/tempBeers', async (req, res) => {
 router.get('/allBeers', async (req, res) => {
   try {
     const beers = await Beer.find({ tempBeer: false })
-      .select('_id beerName brewery style degrees abv description averagePrice averageRating totalNumberOfRatings')
+      .select('_id beerName brewery style degrees abv logo description averagePrice averageRating totalNumberOfRatings')
     if (!beers) return res.status(404).send()
 
     res.status(200).send(beers)

@@ -13,7 +13,7 @@ const populateParams = {
   select: '-__v -dateCreated',
   populate: {
     path: 'beer',
-    select: '_id beerName brewery style degrees abv description averagePrice averageRating totalNumberOfRatings'
+    select: '_id beerName brewery style degrees abv logo description averagePrice averageRating totalNumberOfRatings'
   }
 }
 const averageRound = (a, b, c) => {

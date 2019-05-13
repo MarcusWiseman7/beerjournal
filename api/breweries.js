@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const express = require('express')
 
 // eslint-disable-next-line no-unused-vars
@@ -24,9 +25,12 @@ router.post('/', async (req, res) => {
 })
 
 // Retrieve brewery
-router.get('/', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
+    const brewery = await Brewery.findById(req.params.id)
+    if (!brewery) return res.status(404).send()
 
+    res.status(200).send(brewery)
   } catch (err) {
     return res.status(400).send(err)
   }
@@ -35,7 +39,12 @@ router.get('/', async (req, res) => {
 // Update brewery
 router.patch('/:id', async (req, res) => {
   try {
+    const brewery = await Brewery.findByIdAndUpdate(
+      req.params.id, { $set: req.body }, { new: true }
+    )
+    if (!brewery) return res.status(404).send()
 
+    res.status(200).send(brewery)
   } catch (err) {
     return res.status(400).send(err)
   }
@@ -44,7 +53,10 @@ router.patch('/:id', async (req, res) => {
 // Delete brewery
 router.delete('/:id', async (req, res) => {
   try {
+    const brewery = await Brewery.findByIdAndDelete(req.params.id)
+    if (!brewery) return res.status(404).send()
 
+    res.status(200).send()
   } catch (err) {
     return res.status(400).send(err)
   }

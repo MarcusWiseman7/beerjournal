@@ -15,9 +15,14 @@
       />
       <edit-profile-dialog />
       <change-password-dialog />
-      <add-beer-dialog />
+      <add-beer-dialog v-if="me" />
+      <add-brewery-dialog v-if="me" />
       <beer-review-dialog />
-      <edit-beer-dialog />
+      <edit-beer-dialog v-if="me" />
+      <v-btn
+        v-if="me"
+        @click.native="$store.commit('toggle', 'addBreweryDialog')"
+      >Add Brewery</v-btn>
     </div>
     <beer-table
       :key="$store.state.counter1"
@@ -33,6 +38,7 @@ import ChangePasswordDialog from '~/components/Dialogs/ChangePasswordDialog'
 import BeerTable from '~/components/Views/BeerTable'
 import BeerReviewDialog from '~/components/Dialogs/BeerReviewDialog'
 import EditBeerDialog from '~/components/Dialogs/EditBeerDialog'
+import AddBreweryDialog from '~/components/Dialogs/AddBreweryDialog'
 
 export default {
   name: 'Index',
@@ -43,7 +49,16 @@ export default {
     ChangePasswordDialog,
     BeerTable,
     BeerReviewDialog,
-    EditBeerDialog
+    EditBeerDialog,
+    AddBreweryDialog
+  },
+  computed: {
+    me() {
+      const id = this.$store.state.auth.user._id
+        ? this.$store.state.auth.user._id
+        : ''
+      return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9'
+    }
   }
 }
 </script>
