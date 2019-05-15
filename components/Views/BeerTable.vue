@@ -44,7 +44,7 @@
         v-slot:items="props"
       >
         <tr @click="reviewBeer(props.item)">
-          <td class="my-row-item">{{ props.item.brewery }}</td>
+          <td class="my-row-item">{{ props.item.brewery.name }}</td>
           <td class="my-row-item-beer"><span>{{ props.item.beerName }}</span></td>
           <td
             v-if="props.item.averageRating !== 0"
@@ -61,7 +61,7 @@
         v-slot:items="props"
       >
         <tr @click="reviewBeer(props.item)">
-          <td class="my-row-item">{{ props.item.beer.brewery }}</td>
+          <td class="my-row-item">{{ props.item.beer.brewery.name }}</td>
           <td class="my-row-item-beer"><span>{{ props.item.beer.beerName }}</span></td>
           <td class="my-row-item-rating">{{ props.item.rating }}</td>
         </tr>
@@ -71,7 +71,7 @@
         v-slot:items="props"
       >
         <tr @click="editBeer(props.item)">
-          <td class="my-row-item">{{ props.item.brewery }}</td>
+          <td class="my-row-item">{{ props.item.brewery.name }}</td>
           <td class="my-row-item-beer">{{ props.item.beerName }}</td>
           <td class="my-row-item-rating">{{ props.item.degrees }}°/{{ props.item.abv }}%</td>
         </tr>
@@ -97,7 +97,6 @@ export default {
   data() {
     return {
       search: '',
-      user: {},
       items: []
     }
   },
@@ -108,33 +107,41 @@ export default {
     headers() {
       return this.title === 'Beers'
         ? [
-          { text: 'Brewery', value: 'brewery' },
+          { text: 'Brewery', value: 'brewery.name' },
           { text: 'Beer', value: 'beerName' },
           { text: 'Average', value: 'averageRating' }
         ]
         : this.title === 'My Beers'
           ? [
-            { text: 'Brewery', value: 'beer.brewery' },
+            { text: 'Brewery', value: 'beer.brewery.name' },
             { text: 'Beer', value: 'beer.beerName' },
             { text: 'Rating', value: 'rating' }
           ]
           : [
-            { text: 'Brewery', value: 'brewery' },
+            { text: 'Brewery', value: 'brewery.name' },
             { text: 'Beer', value: 'beerName' },
             { text: 'Info', value: 'degrees' }
           ]
     }
   },
   async created() {
-    if (this.title === 'My Beers') {
-      this.items = this.$store.state.auth.user.reviews
-    } else if (this.title === 'Beers') {
-      this.items = this.$store.state.beers
-    } else {
-      this.items = await this.$axios.get('/beers/tempBeers')
-        .then(res => res.data)
-        .catch(() => this.$toast.error('Error getting temp beers', { duration: 4000 }))
-    }
+    const beers = this.title === 'My Beers'
+      ? this.$store.state.auth.user.reviews
+      : this.title === 'Beers'
+        ? this.$store.state.beers
+        : await this.$axios.get('/beers/tempBeers')
+          .then(res => res.data)
+          .catch(() => this.$toast.error('Error getting temp beers', { duration: 4000 }))
+    this.items = this.title !== 'My Beers'
+      ? beers.map((x) => {
+        const brewery = this.$store.state.breweries.find(y => y._id === x.breweryId)
+        return Object.assign({}, { brewery }, x)
+      })
+      : beers.map((x) => {
+        const z = Object.assign({}, x)
+        z.beer.brewery = this.$store.state.breweries.find(y => y._id === x.beer.breweryId)
+        return z
+      })
   },
   methods: {
     editBeer(beer) {

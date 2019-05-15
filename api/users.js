@@ -169,7 +169,7 @@ router.get('/:id', async (req, res) => {
         select: '-__v dateCreated',
         populate: {
           path: 'beer',
-          select: '_id beerName brewery style degrees abv logo description averagePrice averageRating totalNumberOfRatings'
+          select: '_id beerName breweryId style degrees abv logo description averagePrice averageRating totalNumberOfRatings'
         }
       })
     if (!user) return res.status(404).send()

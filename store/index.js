@@ -1,5 +1,6 @@
 export const state = () => ({
   beers: [],
+  breweries: [],
   loading: false,
   counter: 0,
   counter1: 10000,
@@ -43,6 +44,7 @@ export const mutations = {
     state.counter++
   },
   incCounter1(state) { state.counter1++ },
+  setBreweries(state, breweries) { state.breweries = breweries },
   setBeers(state, beers) { state.beers = beers },
   setReview(state, review) { state.beerReview = Object.assign({}, state.beerReview, review) },
   setSelectBeer(state, beer) { state.selectBeer = Object.assign({}, state.selectBeer, beer) },
@@ -71,12 +73,13 @@ export const mutations = {
 
 export const actions = {
   async nuxtClientInit({ commit }, { app }) {
-    const beers = await app.$axios.$get('/beers/allBeers')
-    commit('setBeers', beers)
+    const res = await app.$axios.$get('/beers/allBeers')
+    commit('setBeers', res.beers)
+    commit('setBreweries', res.breweries)
   },
   async getBeers({ commit }) {
-    const beers = await this.$axios.$get('/beers/allBeers')
-    commit('setBeers', beers)
+    const res = await this.$axios.$get('/beers/allBeers')
+    commit('setBeers', res.beers)
     commit('incCounter1')
   },
   onCancelReview({ commit }) {

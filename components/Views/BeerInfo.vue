@@ -28,7 +28,7 @@
           wrap
           column
         >
-          <h1>{{ beer.brewery }} {{ beer.beerName }}</h1>
+          <h1>{{ beer.brewery.name }} {{ beer.beerName }}</h1>
           <h2>{{ beer.style }}</h2>
         </v-layout>
       </v-layout>
@@ -71,7 +71,7 @@
         class="mt-4"
         column
       >
-        <h3>{{ beer.brewery }}</h3>
+        <h3>{{ beer.brewery.name }}</h3>
         <p class="ml-3">"<span>{{ beer.description }}</span>"</p>
       </v-layout>
     </v-card-text>
