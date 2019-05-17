@@ -22,11 +22,6 @@ const averageRound = (a, b, c) => {
   return Math.round(a / b * x) / x
 }
 
-router.get('/addReviewer', async (req, res) => {
-  await Review.updateMany({}, { $set: { reviewer: '5cb4e10a80b6f075eefbf3e9' } }, { upsert: true })
-  res.send()
-})
-
 // Create new review
 router.post('/:userId', async (req, res) => {
   try {
