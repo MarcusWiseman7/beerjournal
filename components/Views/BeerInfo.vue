@@ -10,7 +10,8 @@
           lazy-src="https://res.cloudinary.com/dukumou2e/image/upload/v1557745360/breweries/lazy-src_zpkrwj.jpg"
           alt="Beer logo"
           aspect-ratio="1"
-          max-width="20vw"
+          min-width="30vw"
+          max-width="30vw"
           class="mr-3"
         >
           <template v-slot:placeholder>
@@ -28,7 +29,13 @@
           wrap
           column
         >
-          <h1>{{ beer.brewery.name }} {{ beer.beerName }}</h1>
+          <v-layout wrap>
+            <h1
+              v-if="beer.brewery"
+              class="mr-2"
+            >{{ beer.brewery.name }}</h1>
+            <h1>{{ beer.beerName }}</h1>
+          </v-layout>
           <h2>{{ beer.style }}</h2>
         </v-layout>
       </v-layout>
@@ -71,8 +78,8 @@
         class="mt-4"
         column
       >
-        <h3>{{ beer.brewery.name }}</h3>
-        <p class="ml-3">"<span>{{ beer.description }}</span>"</p>
+        <h3 v-if="beer.brewery">{{ beer.brewery.name }}</h3>
+        <p class="beer-quote">{{ beer.description }}</p>
       </v-layout>
     </v-card-text>
     <v-card-actions class="my-3">
@@ -94,7 +101,7 @@
       >
         <v-divider class="my-4"></v-divider>
         <h3 v-if="review.reviewer">{{ review.reviewer.name }}</h3>
-        <p class="ml-3">"{{ review.notes }}"</p>
+        <p class="beer-quote">{{ review.notes }}</p>
       </v-layout>
     </v-card-text>
   </div>
@@ -133,7 +140,10 @@ export default {
   text-align: center;
 }
 
-span {
+.beer-quote {
   font-style: italic;
+  margin-left: 20px;
+  letter-spacing: 1.75px;
+  line-height: 2rem;
 }
 </style>

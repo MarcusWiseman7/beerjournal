@@ -42,7 +42,7 @@
             <v-icon @click.native="increment()">add</v-icon>
           </template>
         </v-slider>
-        <h3 class="mb-5">Price (CZK)</h3>
+        <h3 class="mb-5">.5L Price (CZK)</h3>
         <v-slider
           v-model="price"
           always-dirty

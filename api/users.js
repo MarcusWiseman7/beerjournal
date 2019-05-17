@@ -13,7 +13,7 @@ const router = express.Router()
 // Nodemailer transport
 const smtpTransport = nodemailer.createTransport({
   host: 'smtp.office365.com',
-  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'QhaB38OwEbSB2c5v' }
+  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'HANrjyNiBfvHR7th' }
 })
 
 const verifyUserEmail = (params) => {
@@ -169,7 +169,8 @@ router.get('/:id', async (req, res) => {
         select: '-__v dateCreated',
         populate: {
           path: 'beer',
-          select: '_id beerName breweryId style degrees abv logo description averagePrice averageRating totalNumberOfRatings'
+          select: '_id beerName brewery style degrees abv logo description averagePrice averageRating totalNumberOfRatings',
+          populate: { path: 'brewery' }
         }
       })
     if (!user) return res.status(404).send()

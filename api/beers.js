@@ -14,7 +14,7 @@ const router = express.Router()
 // Nodemailer transport
 const smtpTransport = nodemailer.createTransport({
   host: 'smtp.office365.com',
-  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'QhaB38OwEbSB2c5v' }
+  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'HANrjyNiBfvHR7th' }
 })
 
 // sort breweries
@@ -36,13 +36,30 @@ const smtpTransport = nodemailer.createTransport({
 // Create new beer
 router.post('/', async (req, res) => {
   try {
-    const checkBeer = await Beer.findOne({ beerName: req.body.beerName, brewery: req.body.brewery })
-    if (checkBeer) return res.status(404).send(checkBeer)
+    const payload = Object.assign({}, req.body)
+    let newBrewery
+    // const checkBeer = await Beer.findOne({ beerName: payload.beerName, brewery: payload.brewery })
+    // if (checkBeer) return res.status(404).send(checkBeer)
+    if (payload.tempBrewery) {
+      newBrewery = await new Brewery({ name: payload.brewery })
+      await newBrewery.save((err) => {
+        if (err) return res.status(400).send(err)
+      })
+      payload.brewery = newBrewery._id
+    }
 
-    const beer = await new Beer(req.body)
-    beer.save((err) => {
+    const beer = await new Beer(payload)
+    await beer.save((err) => {
       if (err) return res.status(400).send(err)
     })
+
+    if (beer.tempBrewery) {
+      beer.brewery = newBrewery
+    } else {
+      const brewery = await Brewery.findById(beer.brewery)
+      if (!brewery) return res.status(404).send()
+      beer.brewery = brewery
+    }
 
     if (beer.tempBeer) {
       const mailOptions = {
@@ -51,11 +68,13 @@ router.post('/', async (req, res) => {
         subject: 'New Temp Beer',
         text:
           `Beer name: ${beer.beerName} \n\n` +
-          `Brewery: ${beer.brewery} \n\n` +
           `Style: ${beer.style} \n\n` +
           `Degrees: ${beer.degrees} \n\n` +
-          `Abv: ${beer.abv}` +
-          `Beer ID: ${beer._id}`
+          `Abv: ${beer.abv} \n\n` +
+          `Beer ID: ${beer._id} \n\n` +
+          `Brewery: ${beer.brewery.name} \n\n` +
+          `Brewery ID: ${beer.brewery._id} \n\n` +
+          `Temp Brewery: ${beer.tempBrewery}`
       }
       smtpTransport.sendMail(mailOptions, (err) => {
         if (err) return { err: 412 }
@@ -72,7 +91,8 @@ router.post('/', async (req, res) => {
 router.get('/tempBeers', async (req, res) => {
   try {
     const tempBeers = await Beer.find({ tempBeer: true })
-      .select('_id beerName breweryId style degrees abv logo tempBeer description')
+      .select('_id beerName brewery style degrees abv logo tempBeer description')
+      .populate('brewery')
     if (!tempBeers) return res.status(404).send()
 
     res.status(200).send(tempBeers)
@@ -85,7 +105,8 @@ router.get('/tempBeers', async (req, res) => {
 router.get('/allBeers', async (req, res) => {
   try {
     const beers = await Beer.find({ tempBeer: false })
-      .select('_id beerName breweryId style degrees abv logo description averagePrice averageRating totalNumberOfRatings')
+      .select('_id beerName brewery style degrees abv logo description averagePrice averageRating totalNumberOfRatings')
+      .populate('brewery')
     const breweries = await Brewery.find()
       .select('-__v -sumOfAllBeerRatings')
     if (!beers || !breweries) return res.status(404).send()

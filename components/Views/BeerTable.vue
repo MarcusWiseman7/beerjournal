@@ -125,23 +125,13 @@ export default {
     }
   },
   async created() {
-    const beers = this.title === 'My Beers'
+    this.items = this.title === 'My Beers'
       ? this.$store.state.auth.user.reviews
       : this.title === 'Beers'
         ? this.$store.state.beers
         : await this.$axios.get('/beers/tempBeers')
           .then(res => res.data)
           .catch(() => this.$toast.error('Error getting temp beers', { duration: 4000 }))
-    this.items = this.title !== 'My Beers'
-      ? beers.map((x) => {
-        const brewery = this.$store.state.breweries.find(y => y._id === x.breweryId)
-        return Object.assign({}, { brewery }, x)
-      })
-      : beers.map((x) => {
-        const z = Object.assign({}, x)
-        z.beer.brewery = this.$store.state.breweries.find(y => y._id === x.beer.breweryId)
-        return z
-      })
   },
   methods: {
     editBeer(beer) {

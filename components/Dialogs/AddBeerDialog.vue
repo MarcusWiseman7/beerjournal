@@ -108,7 +108,7 @@ export default {
   },
   computed: {
     breweries() {
-      const loadedBreweries = this.$store.state.beers.map(x => x.brewery)
+      const loadedBreweries = this.$store.state.breweries.map(x => x.name)
       return loadedBreweries.concat(this.preloadedBreweries).sort((a, b) => a.localeCompare(b))
     },
     beerNames() {

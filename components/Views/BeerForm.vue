@@ -25,7 +25,17 @@
           label="Brewery"
           required
         ></v-combobox>
+        <v-combobox
+          v-if="me"
+          v-model="style"
+          :rules="[rules.required]"
+          :items="beerStyles"
+          append-icon="arrow_drop_down"
+          label="Style"
+          required
+        ></v-combobox>
         <v-select
+          v-else
           v-model="style"
           :rules="[rules.required]"
           :items="beerStyles"
@@ -131,18 +141,27 @@ export default {
       return this.$store.state.beers.map(x => x.beerName).sort((a, b) => a.localeCompare(b))
     },
     breweries() {
-      const loadedBreweries = this.$store.state.beers.map(x => x.brewery)
+      const loadedBreweries = this.$store.state.breweries.map(x => x.name)
       return loadedBreweries.concat(this.preloadedBreweries).sort((a, b) => a.localeCompare(b))
+    },
+    me() {
+      const id = this.$store.state.auth.user._id
+        ? this.$store.state.auth.user._id
+        : ''
+      return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9'
     }
   },
   methods: {
     onSelect() {
       if (this.$refs.form.validate()) {
         this.$store.commit('toggle', 'loading')
+        const checkForBrewery = this.$store.state.breweries.find(x => x.name === this.brewery)
+        const brewery = checkForBrewery ? checkForBrewery._id : null
+
         if (this.$store.state.editBeerDialog) {
           this.$axios.patch(`/beers/${this._id}`, {
             beerName: this.beerName,
-            brewery: this.brewery,
+            brewery,
             style: this.style,
             degrees: this.degrees,
             abv: this.abv,
@@ -159,27 +178,33 @@ export default {
               this.$toast.error('Error updating beer', { duration: 4000 })
             })
         } else {
-          const beer = this.$store.state.beers.filter(x => x.brewery === this.selectBeerBrewery)
-            .find(x => x.beerName === this.selectBeer)
+          const beer = this.$store.state.beers.filter(x => x.brewery._id === brewery)
+            .find(x => x.beerName === this.beerName)
           if (beer) {
             const reviews = this.$store.state.auth.user.reviews
             if (reviews.map(x => x.beer._id).includes(beer._id)) {
               this.$store.commit('setReview', reviews[reviews.findIndex(x => x.beer._id === beer._id)])
               this.$store.commit('toggle', 'loading')
             } else {
-              this.beer = beer
+              this.$store.commit('setReview', { beer })
               this.$store.commit('toggle', 'loading')
             }
           } else {
             // Post new temp beer
-            this.$axios.post('/beers', {
+            const data = {
               beerName: this.beerName,
               brewery: this.brewery,
               style: this.style,
               degrees: this.degrees,
               abv: this.abv,
-              tempBeer: true
-            })
+              tempBeer: true,
+              tempBrewery: true
+            }
+            if (brewery) {
+              data.tempBrewery = false
+              data.brewery = brewery
+            }
+            this.$axios.post('/beers', data)
               .then((res) => {
                 this.$store.commit('toggle', 'loading')
                 this.$store.commit('setReview', { beer: res.data })

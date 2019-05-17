@@ -9,7 +9,7 @@
         title="My Beers"
       />
       <beer-table
-        v-if="this.$store.state.auth.user.email === 'md.wiseman@hotmail.com'"
+        v-if="me"
         class="mb-3"
         title="Temp Beers"
       />
