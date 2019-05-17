@@ -1,5 +1,6 @@
 <template>
   <v-container class="my-container">
+    <v-btn @click="addReviewer()">addReviewer</v-btn>
     <div v-if="$store.state.auth.loggedIn">
       <h3 class="my-3 text-xs-center">Hi, {{ $store.state.auth.user.name }}!</h3>
       <beer-table
@@ -58,6 +59,11 @@ export default {
         ? this.$store.state.auth.user._id
         : ''
       return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9'
+    }
+  },
+  methods: {
+    addReviewer() {
+      this.$axios.get('/reviews/addReviewer')
     }
   }
 }
