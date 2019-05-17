@@ -17,6 +17,11 @@ const smtpTransport = nodemailer.createTransport({
   auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'HANrjyNiBfvHR7th' }
 })
 
+router.get('/renameKey', async (req, res) => {
+  await Beer.updateMany({}, { $rename: { breweryId: 'brewery' } })
+  res.send()
+})
+
 // sort breweries
 // router.get('/sort', async (req, res) => {
 //   try {
