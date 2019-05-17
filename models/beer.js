@@ -4,7 +4,6 @@ const beerSchema = new mongoose.Schema({
   dateCreated: { type: Date, default: Date.now },
   beerName: { type: String, required: true, trim: true },
   brewery: { type: mongoose.Schema.Types.ObjectId, ref: 'Brewery' },
-  breweryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Brewery' },
   style: { type: String, required: true, trim: true },
   degrees: { type: Number },
   abv: { type: Number },
