@@ -27,6 +27,12 @@
                 <v-list-tile @click.native="$store.commit('toggle', 'myBeerList')">
                   <v-list-tile-title>My Beer List</v-list-tile-title>
                 </v-list-tile>
+                <v-list-tile
+                  v-if="me"
+                  @click.native="$store.commit('toggle', 'tempBeersList')"
+                >
+                  <v-list-tite-title>Temp Beers List</v-list-tite-title>
+                </v-list-tile>
                 <v-list-tile @click.native="$store.commit('toggle', 'editProfileDialog')">
                   <v-list-tile-title>Profile</v-list-tile-title>
                 </v-list-tile>
@@ -56,6 +62,12 @@ export default {
   computed: {
     isAdmin() {
       return this.$store.state.auth.loggedIn
+    },
+    me() {
+      const id = this.$store.state.auth.loggedIn
+        ? this.$store.state.auth.user._id
+        : ''
+      return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9'
     },
     user() {
       return this.$store.state.auth.user

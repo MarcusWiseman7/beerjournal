@@ -2,25 +2,7 @@
   <v-card>
     <v-card-title>
       <v-layout column>
-        <v-layout wrap>
-          <h1 class="ml-2">{{ title }}</h1>
-          <v-spacer></v-spacer>
-          <v-btn
-            v-if="title === 'My Beers'"
-            fab
-            color="primary"
-            top
-            right
-            absolute
-            @click.native="toggleBeerReview()"
-          >
-            <v-icon>add</v-icon>
-          </v-btn>
-          <v-btn
-            v-if="$store.state.auth.loggedIn && title === 'Beers' && $store.state.auth.user.email === 'md.wiseman@hotmail.com'"
-            @click.native="$store.commit('toggle', 'addBeerDialog')"
-          >Add Beer</v-btn>
-        </v-layout>
+        <h1 class="ml-2">{{ title }}</h1>
         <v-text-field
           v-model="search"
           append-icon="search"
@@ -151,10 +133,6 @@ export default {
         this.$store.commit('toggle', 'beerInfo')
         this.$store.commit('toggle', 'beerReviewDialog')
       }
-    },
-    toggleBeerReview() {
-      this.$store.commit('resetReview')
-      this.$store.commit('toggle', 'beerReviewDialog')
     }
   }
 }

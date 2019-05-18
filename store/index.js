@@ -4,23 +4,11 @@ export const state = () => ({
   loading: false,
   counter: 0,
   counter1: 10000,
-  beerReview: {
-    _id: '',
-    rating: 1,
-    price: 1,
-    location: '',
-    notes: '',
-    beer: {}
-  },
-  selectBeer: {
-    beerName: '',
-    brewery: '',
-    style: '',
-    degrees: 4,
-    abv: 3
-  },
+  beerReview: { _id: '', rating: 1, price: 1, location: '', notes: '', beer: {} },
+  selectBeer: { beerName: '', brewery: '', style: '', degrees: 4, abv: 3 },
   beerInfo: false,
   myBeerList: false,
+  tempBeersList: false,
   addBeerDialog: false,
   addBreweryDialog: false,
   beerReviewDialog: false,
@@ -49,23 +37,10 @@ export const mutations = {
   setReview(state, review) { state.beerReview = Object.assign({}, state.beerReview, review) },
   setSelectBeer(state, beer) { state.selectBeer = Object.assign({}, state.selectBeer, beer) },
   resetReview(state) {
-    state.beerReview = {
-      _id: '',
-      rating: 1,
-      price: 1,
-      location: '',
-      notes: '',
-      beer: {}
-    }
+    state.beerReview = { _id: '', rating: 1, price: 1, location: '', notes: '', beer: {} }
   },
   resetSelectBeer(state) {
-    state.selectBeer = {
-      beerName: '',
-      brewery: '',
-      style: '',
-      degrees: 4,
-      abv: 3
-    }
+    state.selectBeer = { beerName: '', brewery: '', style: '', degrees: 4, abv: 3 }
   },
   toggle(state, item) { state[item] = !state[item] },
   truthy(state, params) { state[params.item] = params.bool }

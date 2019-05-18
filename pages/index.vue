@@ -9,7 +9,7 @@
         title="My Beers"
       />
       <beer-table
-        v-if="me"
+        v-if="me && this.$store.state.tempBeersList"
         class="mb-3"
         title="Temp Beers"
       />
@@ -20,14 +20,28 @@
       <beer-review-dialog />
       <edit-beer-dialog v-if="me" />
       <v-btn
-        v-if="me"
-        @click.native="$store.commit('toggle', 'addBreweryDialog')"
-      >Add Brewery</v-btn>
+        fab
+        color="primary"
+        fixed
+        bottom
+        right
+        @click.native="toggleBeerReview()"
+      >
+        <v-icon>add</v-icon>
+      </v-btn>
     </div>
     <beer-table
       :key="$store.state.counter1"
       title="Beers"
     />
+    <v-btn
+      v-if="me"
+      @click.native="$store.commit('toggle', 'addBreweryDialog')"
+    >Add Brewery</v-btn>
+    <v-btn
+      v-if="me"
+      @click.native="$store.commit('toggle', 'addBeerDialog')"
+    >Add Beer</v-btn>
   </v-container>
 </template>
 
@@ -54,10 +68,16 @@ export default {
   },
   computed: {
     me() {
-      const id = this.$store.state.auth.user._id
+      const id = this.$store.state.auth.loggedIn
         ? this.$store.state.auth.user._id
         : ''
       return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9'
+    }
+  },
+  methods: {
+    toggleBeerReview() {
+      this.$store.commit('resetReview')
+      this.$store.commit('toggle', 'beerReviewDialog')
     }
   }
 }
