@@ -24,7 +24,7 @@
         color="primary"
         fixed
         bottom
-        right
+        left
         @click.native="toggleBeerReview()"
       >
         <v-icon>add</v-icon>
