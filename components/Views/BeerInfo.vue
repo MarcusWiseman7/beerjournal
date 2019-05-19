@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-card-title>
-      <v-layout align-center>
+      <v-layout
+        wrap
+        align-center
+      >
         <v-img
           :src="logoSrc"
           lazy-src="https://res.cloudinary.com/dukumou2e/image/upload/v1557745360/breweries/lazy-src_zpkrwj.jpg"
