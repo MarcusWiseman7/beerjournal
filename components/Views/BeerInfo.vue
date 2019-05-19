@@ -1,10 +1,7 @@
 <template>
   <div>
     <v-card-title>
-      <v-layout
-        wrap
-        align-center
-      >
+      <v-layout align-center>
         <v-img
           :src="logoSrc"
           lazy-src="https://res.cloudinary.com/dukumou2e/image/upload/v1557745360/breweries/lazy-src_zpkrwj.jpg"
@@ -44,6 +41,7 @@
       <v-layout
         align-center
         justify-center
+        wrap
       >
         <v-rating
           v-model="beer.averageRating"
@@ -55,6 +53,7 @@
           half-icon="fa fa-beer"
           empty-icon="fa fa-beer"
         ></v-rating>
+        <h3 class="ml-2">({{ beer.averageRating }})</h3>
       </v-layout>
       <v-layout
         align-center
