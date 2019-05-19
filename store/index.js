@@ -4,14 +4,15 @@ export const state = () => ({
   loading: false,
   counter: 0,
   counter1: 10000,
-  beerReview: { _id: '', rating: 1, price: 1, location: '', notes: '', beer: {} },
-  selectBeer: { beerName: '', brewery: '', style: '', degrees: 4, abv: 3 },
-  beerInfo: false,
+  counter2: 100000,
+  beerInfo: { beer: {}, reviews: [], myReview: {} },
+  beerInfoView: false,
   myBeerList: false,
   tempBeersList: false,
   addBeerDialog: false,
   addBreweryDialog: false,
   beerReviewDialog: false,
+  reviewForm: false,
   editBeerDialog: false,
   editProfileDialog: false,
   changePasswordDialog: false,
@@ -32,16 +33,15 @@ export const mutations = {
     state.counter++
   },
   incCounter1(state) { state.counter1++ },
+  incCounter2(state) { state.counter2++ },
+  setItem(state, item) { state[item] = item },
+  setBeerInfo(state, info) { state.beerInfo = info },
   setBreweries(state, breweries) { state.breweries = breweries },
   setBeers(state, beers) { state.beers = beers },
-  setReview(state, review) { state.beerReview = Object.assign({}, state.beerReview, review) },
-  setSelectBeer(state, beer) { state.selectBeer = Object.assign({}, state.selectBeer, beer) },
-  resetReview(state) {
-    state.beerReview = { _id: '', rating: 1, price: 1, location: '', notes: '', beer: {} }
-  },
-  resetSelectBeer(state) {
-    state.selectBeer = { beerName: '', brewery: '', style: '', degrees: 4, abv: 3 }
-  },
+  setMyReview(state, review) { state.beerInfo.myReview = Object.assign({}, state.beerInfo.myReview, review) },
+  setBeer(state, beer) { state.beerInfo.beer = Object.assign({}, state.beerInfo.beer, beer) },
+  setReviews(state, reviews) { state.beerInfo.reviews = reviews },
+  resetBeerInfo(state) { state.beerInfo = { beer: {}, reviews: [], myReview: {} } },
   toggle(state, item) { state[item] = !state[item] },
   truthy(state, params) { state[params.item] = params.bool }
 }
@@ -57,11 +57,25 @@ export const actions = {
     commit('setBeers', res.beers)
     commit('incCounter1')
   },
-  onCancelReview({ commit }) {
-    commit('truthy', { item: 'beerReviewDialog', bool: false })
-    commit('truthy', { item: 'editBeerDialog', bool: false })
-    commit('truthy', { item: 'beerInfo', bool: false })
-    commit('resetReview')
-    commit('resetSelectBeer')
+  async beerInfo({ commit, state }, beer) {
+    if (state.auth.loggedIn) {
+      const myId = state.auth.user._id
+      const reviews = await this.$axios.get(`/reviews/${beer._id}`)
+        .then(res => res.data)
+        // eslint-disable-next-line no-console
+        .catch(err => console.error(err))
+      let myReview
+
+      if (reviews.map(x => x.reviewer._id).includes(myId)) {
+        myReview = reviews[reviews.findIndex(x => x.reviewer._id === myId)]
+        reviews.splice(reviews.indexOf(myReview), 1)
+      } else {
+        myReview = {}
+      }
+
+      commit('setBeerInfo', { beer, reviews, myReview })
+      commit('toggle', 'beerInfoView')
+      commit('truthy', { item: 'beerReviewDialog', bool: true })
+    }
   }
 }

@@ -1,60 +1,44 @@
 <template>
   <div>
+    <v-card-text>
+      <v-divider></v-divider>
+    </v-card-text>
     <v-card-title>
-      <v-layout column>
-        <h1>Beer Notes</h1>
-        <!-- // v-ifs -->
-        <v-layout wrap>
-          <h2
-            v-if="beer.brewery"
-            class="mr-2"
-          >{{ beer.brewery.name }}</h2>
-          <h2
-            v-if="beer.beerName"
-            class="mr-2"
-          >{{ beer.beerName }}</h2>
-          <h2 v-if="beer.degrees">{{ beer.degrees }}°</h2>
-        </v-layout>
-        <h3>Style: {{ beer.style }}</h3>
-        <h3 v-if="beer.abv">abv: {{ beer.abv }}%</h3>
-        <h3 v-if="beer.averageRating !== 0">Ave Rating: {{ beer.averageRating }}</h3>
-        <h3 v-if="beer.averagePrice !== 0">Ave Price: {{ beer.averagePrice }}</h3>
-      </v-layout>
+      <h1>My Beer Notes</h1>
     </v-card-title>
     <v-card-text>
       <v-form
         ref="form"
         lazy-validation
       >
-        <h3 class="mb-5">Rating (5 is best)</h3>
+        <h3>Rating (5 is best)</h3>
+        <v-layout
+          align-center
+          justify-center
+        >
+          <v-rating
+            v-model="rating"
+            :rules="[rules.required]"
+            class="my-3"
+            background-color="secondary"
+            medium
+            full-icon="fa fa-beer"
+            empty-icon="fa fa-beer"
+          ></v-rating>
+        </v-layout>
+        <h3 class="mb-5">.5L Price (CZK)</h3>
         <v-slider
-          v-model="rating"
-          :rules="[rules.required]"
+          v-model="price"
           always-dirty
           thumb-label="always"
-          min="1"
-          max="5"
+          min="0"
+          max="150"
         >
           <template v-slot:prepend>
             <v-icon @click.native="decrement()">remove</v-icon>
           </template>
           <template v-slot:append>
             <v-icon @click.native="increment()">add</v-icon>
-          </template>
-        </v-slider>
-        <h3 class="mb-5">.5L Price (CZK)</h3>
-        <v-slider
-          v-model="price"
-          always-dirty
-          thumb-label="always"
-          min="1"
-          max="150"
-        >
-          <template v-slot:prepend>
-            <v-icon @click.native="decrement1()">remove</v-icon>
-          </template>
-          <template v-slot:append>
-            <v-icon @click.native="increment1()">add</v-icon>
           </template>
         </v-slider>
         <v-text-field
@@ -75,18 +59,18 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-        v-if="beerReview._id"
-        small
+        v-if="beerInfo.myReview._id"
+        :small="smallScreen"
         color="error"
         @click.native="onCheckDelete = true"
       >Delete</v-btn>
       <v-btn
-        small
+        :small="smallScreen"
         @click.native="onCancel()"
       >Cancel</v-btn>
       <v-btn
         v-show="beer._id"
-        small
+        :small="smallScreen"
         color="primary"
         @click.native="onSubmit()"
       >Submit</v-btn>
@@ -124,35 +108,37 @@ export default {
     }
   },
   computed: {
-    ...mapState(['beerReview']),
+    ...mapState(['beerInfo']),
     _id: {
-      set(_id) { this.$store.commit('setReview', { _id }) },
-      get() { return this.beerReview._id }
+      set(_id) { this.$store.commit('setMyReview', { _id }) },
+      get() { return this.beerInfo.myReview._id }
     },
     rating: {
-      set(rating) { this.$store.commit('setReview', { rating }) },
-      get() { return this.beerReview.rating }
+      set(rating) { this.$store.commit('setMyReview', { rating }) },
+      get() { return this.beerInfo.myReview.rating }
     },
     price: {
-      set(price) { this.$store.commit('setReview', { price }) },
-      get() { return this.beerReview.price }
+      set(price) { this.$store.commit('setMyReview', { price }) },
+      get() { return this.beerInfo.myReview.price }
     },
     location: {
-      set(location) { this.$store.commit('setReview', { location }) },
-      get() { return this.beerReview.location }
+      set(location) { this.$store.commit('setMyReview', { location }) },
+      get() { return this.beerInfo.myReview.location }
     },
     notes: {
-      set(notes) { this.$store.commit('setReview', { notes }) },
-      get() { return this.beerReview.notes }
+      set(notes) { this.$store.commit('setMyReview', { notes }) },
+      get() { return this.beerInfo.myReview.notes }
     },
-    beer: {
-      set(beer) { this.$store.commit('setReview', { beer }) },
-      get() { return this.beerReview.beer }
-    },
+    beer() { return this.beerInfo.beer },
     userId() { return this.$store.state.auth.user._id },
-    rules() { return this.$store.state.rules }
+    rules() { return this.$store.state.rules },
+    smallScreen() { return window.screen.availWidth < 360 }
   },
   methods: {
+    onCancel() {
+      this.$store.commit('truthy', { item: 'reviewForm', bool: false })
+      this.$store.commit('incCounter2')
+    },
     onSubmit() {
       if (this.$refs.form.validate()) {
         this.$store.commit('toggle', 'loading')
@@ -165,7 +151,7 @@ export default {
           reviewer: this.userId
         }
         if (!this._id) {
-          this.$axios.post(`/reviews/${this.userId}`, body)
+          this.$axios.post('/reviews', body)
             .then((res) => {
               this.$store.commit('toggle', 'loading')
               this.$store.commit('setUser', res.data)
@@ -198,6 +184,7 @@ export default {
         .then((res) => {
           this.$store.commit('toggle', 'loading')
           this.$store.commit('setUser', res.data)
+          this.onCheckDelete = false
           this.onCancel()
           this.$toast.success('Deleted beer review', { duration: 4000 })
         })
@@ -206,13 +193,8 @@ export default {
           this.$toast.error('Error deleting beer review, please try again', { duration: 4000 })
         })
     },
-    onCancel() {
-      this.$store.dispatch('onCancelReview')
-    },
-    decrement() { this.rating-- },
-    increment() { this.rating++ },
-    decrement1() { this.price-- },
-    increment1() { this.price++ }
+    decrement() { this.price-- },
+    increment() { this.price++ }
   }
 }
 </script>

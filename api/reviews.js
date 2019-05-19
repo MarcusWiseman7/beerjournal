@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const express = require('express')
 
 // eslint-disable-next-line no-unused-vars
@@ -23,9 +24,8 @@ const averageRound = (a, b, c) => {
 }
 
 // Create new review
-router.post('/:userId', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const id = req.params.id
     const review = await new Review(req.body)
     await review.save((err) => {
       if (err) return res.status(400).send(err)
@@ -47,7 +47,10 @@ router.post('/:userId', async (req, res) => {
       if (err) return res.status(400).send(err)
     })
 
-    const user = await User.findByIdAndUpdate(id, { $push: { reviews: review._id } }, { new: true })
+    const user = await User.findByIdAndUpdate(
+      review.reviewer, { $push: { reviews: review._id } }, { new: true }
+    )
+      .select('_id name surname email userIcon darkMode')
       .populate(populateParams)
     if (!user) return res.status(404).send()
 
@@ -63,7 +66,7 @@ router.get('/:beerId', async (req, res) => {
     const reviews = await Review.find({ beer: req.params.beerId })
       .populate({
         path: 'reviewer',
-        select: 'name'
+        select: '_id name'
       })
     if (!reviews) return res.status(404).send()
 

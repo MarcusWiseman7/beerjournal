@@ -13,12 +13,12 @@
         class="mb-3"
         title="Temp Beers"
       />
-      <edit-profile-dialog />
+      <!-- <edit-profile-dialog />
       <change-password-dialog />
       <add-beer-dialog v-if="me" />
-      <add-brewery-dialog v-if="me" />
-      <beer-review-dialog />
-      <edit-beer-dialog v-if="me" />
+      <add-brewery-dialog v-if="me" /> -->
+      <beer-review-dialog :key="$store.state.counter2" />
+      <!-- <edit-beer-dialog v-if="me" /> -->
       <v-btn
         fab
         color="primary"
@@ -34,37 +34,40 @@
       :key="$store.state.counter1"
       title="Beers"
     />
-    <v-btn
-      v-if="me"
-      @click.native="$store.commit('toggle', 'addBreweryDialog')"
-    >Add Brewery</v-btn>
-    <v-btn
-      v-if="me"
-      @click.native="$store.commit('toggle', 'addBeerDialog')"
-    >Add Beer</v-btn>
+    <v-layout wrap>
+      <v-spacer></v-spacer>
+      <v-btn
+        v-if="me"
+        @click.native="$store.commit('toggle', 'addBreweryDialog')"
+      >Add Brewery</v-btn>
+      <v-btn
+        v-if="me"
+        @click.native="$store.commit('toggle', 'addBeerDialog')"
+      >Add Beer</v-btn>
+    </v-layout>
   </v-container>
 </template>
 
 <script>
-import AddBeerDialog from '~/components/Dialogs/AddBeerDialog'
-import EditProfileDialog from '~/components/Dialogs/EditProfileDialog'
-import ChangePasswordDialog from '~/components/Dialogs/ChangePasswordDialog'
+// import AddBeerDialog from '~/components/Dialogs/AddBeerDialog'
+// import EditProfileDialog from '~/components/Dialogs/EditProfileDialog'
+// import ChangePasswordDialog from '~/components/Dialogs/ChangePasswordDialog'
 import BeerTable from '~/components/Views/BeerTable'
 import BeerReviewDialog from '~/components/Dialogs/BeerReviewDialog'
-import EditBeerDialog from '~/components/Dialogs/EditBeerDialog'
-import AddBreweryDialog from '~/components/Dialogs/AddBreweryDialog'
+// import EditBeerDialog from '~/components/Dialogs/EditBeerDialog'
+// import AddBreweryDialog from '~/components/Dialogs/AddBreweryDialog'
 
 export default {
   name: 'Index',
   auth: false,
   components: {
-    AddBeerDialog,
-    EditProfileDialog,
-    ChangePasswordDialog,
+    // AddBeerDialog,
+    // EditProfileDialog,
+    // ChangePasswordDialog,
     BeerTable,
-    BeerReviewDialog,
-    EditBeerDialog,
-    AddBreweryDialog
+    BeerReviewDialog
+    // EditBeerDialog,
+    // AddBreweryDialog
   },
   computed: {
     me() {
@@ -76,7 +79,7 @@ export default {
   },
   methods: {
     toggleBeerReview() {
-      this.$store.commit('resetReview')
+      this.$store.commit('resetBeerInfo')
       this.$store.commit('toggle', 'beerReviewDialog')
     }
   }

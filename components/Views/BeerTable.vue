@@ -22,10 +22,10 @@
       :hide-actions="hideActions"
     >
       <template
-        v-if="title === 'Beers'"
+        v-if="title !== 'Temp Beers'"
         v-slot:items="props"
       >
-        <tr @click="reviewBeer(props.item)">
+        <tr @click="$store.dispatch('beerInfo', props.item)">
           <td class="my-row-item">{{ props.item.brewery.name }}</td>
           <td class="my-row-item-beer"><span>{{ props.item.beerName }}</span></td>
           <td
@@ -38,16 +38,16 @@
           >-</td>
         </tr>
       </template>
-      <template
+      <!-- <template
         v-else-if="title === 'My Beers'"
         v-slot:items="props"
       >
-        <tr @click="reviewBeer(props.item)">
-          <td class="my-row-item">{{ props.item.beer.brewery.name }}</td>
-          <td class="my-row-item-beer"><span>{{ props.item.beer.beerName }}</span></td>
+        <tr @click="beerInfo(props.item)">
+          <td class="my-row-item">{{ props.item.brewery.name }}</td>
+          <td class="my-row-item-beer"><span>{{ props.item.beerName }}</span></td>
           <td class="my-row-item-rating">{{ props.item.rating }}</td>
         </tr>
-      </template>
+      </template> -->
       <template
         v-else
         v-slot:items="props"
@@ -87,28 +87,39 @@ export default {
       return !(this.items.length && this.items.length > 5)
     },
     headers() {
-      return this.title === 'Beers'
+      return this.title !== 'Temp Beers'
         ? [
           { text: 'Brewery', value: 'brewery.name' },
           { text: 'Beer', value: 'beerName' },
           { text: 'Average', value: 'averageRating' }
         ]
-        : this.title === 'My Beers'
-          ? [
-            { text: 'Brewery', value: 'beer.brewery.name' },
-            { text: 'Beer', value: 'beer.beerName' },
-            { text: 'Rating', value: 'rating' }
-          ]
-          : [
-            { text: 'Brewery', value: 'brewery.name' },
-            { text: 'Beer', value: 'beerName' },
-            { text: 'Info', value: 'degrees' }
-          ]
+        : [
+          { text: 'Brewery', value: 'brewery.name' },
+          { text: 'Beer', value: 'beerName' },
+          { text: 'Info', value: 'degrees' }
+        ]
+      // return this.title === 'Beers'
+      //   ? [
+      //     { text: 'Brewery', value: 'brewery.name' },
+      //     { text: 'Beer', value: 'beerName' },
+      //     { text: 'Average', value: 'averageRating' }
+      //   ]
+      //   : this.title === 'My Beers'
+      //     ? [
+      //       { text: 'Brewery', value: 'brewery.name' },
+      //       { text: 'Beer', value: 'beerName' },
+      //       { text: 'Rating', value: 'rating' }
+      //     ]
+      //     : [
+      //       { text: 'Brewery', value: 'brewery.name' },
+      //       { text: 'Beer', value: 'beerName' },
+      //       { text: 'Info', value: 'degrees' }
+      //     ]
     }
   },
   async created() {
     this.items = this.title === 'My Beers'
-      ? this.$store.state.auth.user.reviews
+      ? this.$store.state.auth.user.reviews.map(x => x.beer)
       : this.title === 'Beers'
         ? this.$store.state.beers
         : await this.$axios.get('/beers/tempBeers')
@@ -119,20 +130,6 @@ export default {
     editBeer(beer) {
       this.$store.commit('setSelectBeer', beer)
       this.$store.commit('toggle', 'editBeerDialog')
-    },
-    reviewBeer(beer) {
-      if (this.$store.state.auth.loggedIn) {
-        const reviews = this.$store.state.auth.user.reviews
-        const review = this.title === 'My Beers'
-          ? beer
-          : reviews.map(x => x.beer._id).includes(beer._id)
-            ? reviews[reviews.findIndex(x => x.beer._id === beer._id)]
-            : { beer }
-
-        this.$store.commit('setReview', review)
-        this.$store.commit('toggle', 'beerInfo')
-        this.$store.commit('toggle', 'beerReviewDialog')
-      }
     }
   }
 }

@@ -7,10 +7,10 @@
   >
     <v-card>
       <beer-banner />
-      <beer-info v-if="$store.state.beerInfo" />
-      <div v-else>
-        <beer-form v-show="!$store.state.beerReview.beer._id"></beer-form>
-        <review-form v-show="$store.state.beerReview.beer._id"></review-form>
+      <beer-info v-if="$store.state.beerInfoView" />
+      <div>
+        <beer-form v-show="!$store.state.beerInfo.beer._id"></beer-form>
+        <review-form v-show="$store.state.reviewForm"></review-form>
       </div>
     </v-card>
   </v-dialog>
@@ -27,9 +27,6 @@ export default {
     BeerForm,
     ReviewForm,
     BeerInfo
-  },
-  computed: {
-    selectBeer() { return this.$store.state.beerReview.beer._id }
   }
 }
 </script>

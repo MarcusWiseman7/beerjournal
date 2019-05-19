@@ -1,7 +1,10 @@
 <template>
   <div>
+    <v-card-text>
+      <v-divider></v-divider>
+    </v-card-text>
     <v-card-title>
-      <h1>Beer</h1>
+      <h1>Select Beer</h1>
     </v-card-title>
     <v-card-text>
       <v-form
@@ -48,7 +51,7 @@
           v-model="degrees"
           always-dirty
           thumb-label="always"
-          min="4"
+          min="0"
           max="25"
         >
           <template v-slot:prepend>
@@ -64,7 +67,7 @@
           always-dirty
           thumb-label="always"
           step="0.1"
-          min="3"
+          min="0"
           max="14"
         >
           <template v-slot:prepend>
@@ -74,11 +77,16 @@
             <v-icon @click.native="incAbv()">add</v-icon>
           </template>
         </v-slider>
-        <v-switch
-          v-if="$store.state.editBeerDialog"
-          v-model="tempBeer"
-          :label="`Temp Beer: ${tempBeer.toString()}`"
-        ></v-switch>
+        <div v-if="$store.state.editBeerDialog">
+          <v-switch
+            v-model="tempBeer"
+            :label="`Temp Beer: ${tempBeer.toString()}`"
+          ></v-switch>
+          <v-switch
+            v-model="tempBrewery"
+            :label="`Temp Brewery: ${tempBrewery.toString()}`"
+          ></v-switch>
+        </div>
       </v-form>
     </v-card-text>
     <v-card-actions>
@@ -110,31 +118,35 @@ export default {
     }
   },
   computed: {
-    ...mapState(['selectBeer']),
-    _id() { return this.selectBeer._id },
+    ...mapState(['beerInfo']),
+    _id() { return this.beerInfo.beer._id },
     beerName: {
-      set(beerName) { this.$store.commit('setSelectBeer', { beerName }) },
-      get() { return this.selectBeer.beerName }
+      set(beerName) { this.$store.commit('setBeer', { beerName }) },
+      get() { return this.beerInfo.beer.beerName }
     },
     brewery: {
-      set(brewery) { this.$store.commit('setSelectBeer', { brewery }) },
-      get() { return this.selectBeer.brewery }
+      set(brewery) { this.$store.commit('setBeer', { brewery }) },
+      get() { return this.beerInfo.beer.brewery }
     },
     style: {
-      set(style) { this.$store.commit('setSelectBeer', { style }) },
-      get() { return this.selectBeer.style }
+      set(style) { this.$store.commit('setBeer', { style }) },
+      get() { return this.beerInfo.beer.style }
     },
     degrees: {
-      set(degrees) { this.$store.commit('setSelectBeer', { degrees }) },
-      get() { return this.selectBeer.degrees }
+      set(degrees) { this.$store.commit('setBeer', { degrees }) },
+      get() { return this.beerInfo.beer.degrees }
     },
     abv: {
-      set(abv) { this.$store.commit('setSelectBeer', { abv }) },
-      get() { return this.selectBeer.abv }
+      set(abv) { this.$store.commit('setBeer', { abv }) },
+      get() { return this.beerInfo.beer.abv }
     },
     tempBeer: {
-      set(tempBeer) { this.$store.commit('setSelectBeer', { tempBeer }) },
-      get() { return this.selectBeer.tempBeer }
+      set(tempBeer) { this.$store.commit('setBeer', { tempBeer }) },
+      get() { return this.beerInfo.beer.tempBeer }
+    },
+    tempBrewery: {
+      set(tempBrewery) { this.$store.commit('setBeer', { tempBrewery }) },
+      get() { return this.beerInfo.beer.tempBrewery }
     },
     rules() { return this.$store.state.rules },
     beerNames() {
@@ -142,7 +154,9 @@ export default {
     },
     breweries() {
       const loadedBreweries = this.$store.state.breweries.map(x => x.name)
-      return loadedBreweries.concat(this.preloadedBreweries).sort((a, b) => a.localeCompare(b))
+      return this.me
+        ? loadedBreweries.concat(this.preloadedBreweries).sort((a, b) => a.localeCompare(b))
+        : loadedBreweries
     },
     me() {
       const id = this.$store.state.auth.user._id
@@ -165,7 +179,8 @@ export default {
             style: this.style,
             degrees: this.degrees,
             abv: this.abv,
-            tempBeer: this.tempBeer
+            tempBeer: this.tempBeer,
+            tempBrewery: this.tempBrewery
           })
             .then(() => {
               this.$store.commit('toggle', 'loading')
@@ -181,14 +196,8 @@ export default {
           const beer = this.$store.state.beers.filter(x => x.brewery._id === brewery)
             .find(x => x.beerName === this.beerName)
           if (beer) {
-            const reviews = this.$store.state.auth.user.reviews
-            if (reviews.map(x => x.beer._id).includes(beer._id)) {
-              this.$store.commit('setReview', reviews[reviews.findIndex(x => x.beer._id === beer._id)])
-              this.$store.commit('toggle', 'loading')
-            } else {
-              this.$store.commit('setReview', { beer })
-              this.$store.commit('toggle', 'loading')
-            }
+            this.$store.dispatch('beerInfo', beer)
+            this.$store.commit('toggle', 'loading')
           } else {
             // Post new temp beer
             const data = {
@@ -200,14 +209,14 @@ export default {
               tempBeer: true,
               tempBrewery: true
             }
-            if (brewery) {
+            if (checkForBrewery) {
               data.tempBrewery = false
               data.brewery = brewery
             }
             this.$axios.post('/beers', data)
               .then((res) => {
                 this.$store.commit('toggle', 'loading')
-                this.$store.commit('setReview', { beer: res.data })
+                this.$store.dispatch('beerInfo', res.data)
               })
               .catch(() => {
                 this.$store.commit('toggle', 'loading')
@@ -218,7 +227,8 @@ export default {
       }
     },
     onCancel() {
-      this.$store.dispatch('onCancelReview')
+      this.$store.commit('truthy', { item: 'beerReviewDialog', bool: false })
+      this.$store.commit('resetBeerInfo')
     },
     decDegrees() { this.degrees-- },
     incDegrees() { this.degrees++ },

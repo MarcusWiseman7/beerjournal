@@ -31,7 +31,7 @@
                   v-if="me"
                   @click.native="$store.commit('toggle', 'tempBeersList')"
                 >
-                  <v-list-tite-title>Temp Beers List</v-list-tite-title>
+                  <v-list-tile-title>Temp Beers List</v-list-tile-title>
                 </v-list-tile>
                 <v-list-tile @click.native="$store.commit('toggle', 'editProfileDialog')">
                   <v-list-tile-title>Profile</v-list-tile-title>

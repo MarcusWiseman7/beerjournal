@@ -86,23 +86,36 @@
       <v-spacer></v-spacer>
       <v-btn
         flat
-        @click.native="$store.dispatch('onCancelReview')"
+        @click.native="onClose()"
       >close</v-btn>
       <v-btn
         color="primary"
-        @click.native="$store.commit('toggle', 'beerInfo')"
+        @click.native="$store.commit('toggle', 'reviewForm')"
       >Notes</v-btn>
     </v-card-actions>
-    <v-card-text>
+    <v-card-text v-if="!$store.state.reviewForm">
       <v-layout
+        v-if="myReview.notes"
+        column
+      >
+        <v-divider class="my-4"></v-divider>
+        <h3 v-if="myReview.reviewer">{{ myReview.reviewer.name }}</h3>
+        <p class="beer-quote">{{ myReview.notes }}</p>
+      </v-layout>
+      <div
         v-for="(review, i) in reviews"
         :key="i"
         column
       >
-        <v-divider class="my-4"></v-divider>
-        <h3 v-if="review.reviewer">{{ review.reviewer.name }}</h3>
-        <p class="beer-quote">{{ review.notes }}</p>
-      </v-layout>
+        <v-layout
+          v-if="review.notes"
+          column
+        >
+          <v-divider class="my-4"></v-divider>
+          <h3 v-if="review.reviewer">{{ review.reviewer.name }}</h3>
+          <p class="beer-quote">{{ review.notes }}</p>
+        </v-layout>
+      </div>
     </v-card-text>
   </div>
 </template>
@@ -110,13 +123,10 @@
 <script>
 export default {
   name: 'BeerInfo',
-  data() {
-    return {
-      reviews: []
-    }
-  },
   computed: {
-    beer() { return this.$store.state.beerReview.beer },
+    beer() { return this.$store.state.beerInfo.beer },
+    reviews() { return this.$store.state.beerInfo.reviews },
+    myReview() { return this.$store.state.beerInfo.myReview },
     logoSrc() {
       return this.beer.logo
         ? this.beer.logo
@@ -125,11 +135,13 @@ export default {
           : 'https://res.cloudinary.com/dukumou2e/image/upload/v1557745360/breweries/lazy-src_zpkrwj.jpg'
     }
   },
-  async mounted() {
-    this.reviews = await this.$axios.get(`/reviews/${this.beer._id}`)
-      .then(res => res.data)
-      // eslint-disable-next-line no-console
-      .catch(err => console.log(err))
+  methods: {
+    onClose() {
+      this.$store.commit('toggle', 'beerInfoView')
+      this.$store.commit('toggle', 'beerReviewDialog')
+      this.$store.commit('resetBeerInfo')
+      this.$store.commit('truthy', { item: 'reviewForm', bool: false })
+    }
   }
 }
 </script>
