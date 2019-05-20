@@ -13,9 +13,9 @@
         class="mb-3"
         title="Temp Beers"
       />
-      <!-- <edit-profile-dialog />
+      <edit-profile-dialog />
       <change-password-dialog />
-      <add-beer-dialog v-if="me" />
+      <!-- <add-beer-dialog v-if="me" />
       <add-brewery-dialog v-if="me" /> -->
       <beer-review-dialog :key="$store.state.counter2" />
       <!-- <edit-beer-dialog v-if="me" /> -->
@@ -50,8 +50,8 @@
 
 <script>
 // import AddBeerDialog from '~/components/Dialogs/AddBeerDialog'
-// import EditProfileDialog from '~/components/Dialogs/EditProfileDialog'
-// import ChangePasswordDialog from '~/components/Dialogs/ChangePasswordDialog'
+import EditProfileDialog from '~/components/Dialogs/EditProfileDialog'
+import ChangePasswordDialog from '~/components/Dialogs/ChangePasswordDialog'
 import BeerTable from '~/components/Views/BeerTable'
 import BeerReviewDialog from '~/components/Dialogs/BeerReviewDialog'
 // import EditBeerDialog from '~/components/Dialogs/EditBeerDialog'
@@ -62,8 +62,8 @@ export default {
   auth: false,
   components: {
     // AddBeerDialog,
-    // EditProfileDialog,
-    // ChangePasswordDialog,
+    EditProfileDialog,
+    ChangePasswordDialog,
     BeerTable,
     BeerReviewDialog
     // EditBeerDialog,
