@@ -92,11 +92,11 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-        small
+        :small="smallScreen"
         @click.native="onCancel()"
       >Cancel</v-btn>
       <v-btn
-        small
+        :small="smallScreen"
         color="primary"
         @click.native="onSelect()"
       >Select</v-btn>
@@ -163,7 +163,8 @@ export default {
         ? this.$store.state.auth.user._id
         : ''
       return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9'
-    }
+    },
+    smallScreen() { return window.screen.availWidth < 360 }
   },
   methods: {
     onSelect() {
