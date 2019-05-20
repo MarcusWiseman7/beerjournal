@@ -52,7 +52,8 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     '@nuxtjs/toast',
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    ['@nuxtjs/google-analytics', { id: 'UA-140466990-1' }]
   ],
   /*
    ** Axios module configuration
