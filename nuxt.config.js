@@ -81,6 +81,11 @@ module.exports = {
           logout: { url: '/auth/logout', method: 'post' },
           user: { url: '/auth/user', method: 'get', propertyName: 'user' }
         }
+      },
+      facebook: {
+        client_id: '2276566119272505',
+        userinfo_endpoint: 'https://graph.facebook.com/v2.12/me?fields=about,name,picture{url},email,birthday',
+        scope: ['public_profile', 'email']
       }
     }
   },

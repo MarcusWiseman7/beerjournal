@@ -13,10 +13,10 @@ const router = express.Router()
 // Nodemailer transport
 const smtpTransport = nodemailer.createTransport({
   host: 'smtp.office365.com',
-  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'HANrjyNiBfvHR7th' }
+  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'ckx3Ep1ACXvRneW' }
 })
 
-const verifyUserEmail = (params) => {
+const verifyUserEmail = params => {
   const mailOptions = {
     to: params.email,
     from: '<no-reply.beerjournal@outlook.com>',
@@ -29,7 +29,7 @@ const verifyUserEmail = (params) => {
       `Best regards, \n\n` +
       `BeerJournal`
   }
-  smtpTransport.sendMail(mailOptions, (err) => {
+  smtpTransport.sendMail(mailOptions, err => {
     if (err) return { err: 412 }
   })
 
@@ -61,7 +61,7 @@ router.patch('/changePassword', async (req, res) => {
     if (user && bcrypt.compareSync(req.body.currentPassword, user.password)) {
       user.password = req.body.newPassword
 
-      await user.save((err) => {
+      await user.save(err => {
         if (err) return res.status(400).send()
       })
       return res.status(200).send()
@@ -81,7 +81,9 @@ router.patch('/forgot', async (req, res) => {
     const resetPasswordExpires = Date.now() + 3600000
 
     const user = await User.findOneAndUpdate(
-      { email }, { $set: { resetPasswordToken, resetPasswordExpires } }, { new: true }
+      { email },
+      { $set: { resetPasswordToken, resetPasswordExpires } },
+      { new: true }
     )
     if (!user) return res.status(404).send()
 
@@ -98,7 +100,7 @@ router.patch('/forgot', async (req, res) => {
         'Best regards, \n\n' +
         'BeerJournal'
     }
-    smtpTransport.sendMail(mailOptions, (err) => {
+    smtpTransport.sendMail(mailOptions, err => {
       if (err) return res.status(412).send(err)
     })
 
@@ -112,19 +114,17 @@ router.patch('/forgot', async (req, res) => {
 router.patch('/reset/:token', async (req, res) => {
   try {
     const password = req.body.password
-    const user = await User.findOne(
-      {
-        resetPasswordToken: req.params.token,
-        resetPasswordExpires: { $gt: Date.now() }
-      }
-    )
+    const user = await User.findOne({
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() }
+    })
     if (!user) return res.status(404).send()
 
     user.password = password
     user.resetPasswordToken = undefined
     user.resetPasswordExpires = undefined
 
-    await user.save((err) => {
+    await user.save(err => {
       if (err) return res.status(400).send(err)
     })
 
@@ -147,7 +147,13 @@ router.post('/newUser', async (req, res) => {
     const checkUserEmail = await User.findOne({ email })
     if (checkUserEmail) return res.status(404).send()
 
-    const user = await new User({ name, surname, verifyEmail: email, password, gdprApproval })
+    const user = await new User({
+      name,
+      surname,
+      verifyEmail: email,
+      password,
+      gdprApproval
+    })
     await user.save()
 
     const info = await verifyUserEmail({ url, name, surname, email })
@@ -169,7 +175,8 @@ router.get('/:id', async (req, res) => {
         select: '-__v dateCreated',
         populate: {
           path: 'beer',
-          select: '_id beerName brewery style degrees abv logo description averagePrice averageRating totalNumberOfRatings',
+          select:
+            '_id beerName brewery style degrees abv logo description averagePrice averageRating totalNumberOfRatings',
           populate: { path: 'brewery' }
         }
       })
@@ -196,7 +203,12 @@ router.patch('/:id', async (req, res) => {
       const checkUserEmail = await User.findOne({ email })
       if (checkUserEmail) return res.status(404).send()
 
-      const info = await verifyUserEmail({ url: req.headers.host, name, surname, email })
+      const info = await verifyUserEmail({
+        url: req.headers.host,
+        name,
+        surname,
+        email
+      })
       if (info.err) return res.status(info.err).send()
     }
 

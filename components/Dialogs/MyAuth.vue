@@ -1,18 +1,10 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    max-width="450"
-    :fullscreen="$vuetify.breakpoint.xsOnly"
-    persistent
-  >
+  <v-dialog v-model="dialog" max-width="450" :fullscreen="$vuetify.breakpoint.xsOnly" persistent>
     <template v-slot:activator="{ on }">
-      <v-btn
-        color="accent"
-        v-on="on"
-      >Login/Sign up</v-btn>
+      <v-btn color="accent" v-on="on">Login/Sign up</v-btn>
     </template>
     <v-card>
-      <beer-banner />
+      <beer-banner/>
       <v-card-title>
         <h1>{{ title }}</h1>
       </v-card-title>
@@ -52,44 +44,25 @@
             @keyup.enter="onSubmit"
           ></v-text-field>
           <div v-if="signup">
-            <v-checkbox
-              v-model="gdprApproval"
-              :rules="[rules.required]"
-              color="primary"
-              required
-            >
+            <v-checkbox v-model="gdprApproval" :rules="[rules.required]" color="primary" required>
               <template slot="label">
                 I agree to the&nbsp;
                 <a @click.stop.prevent="dialogTerms = true">Terms of Service</a>
                 &nbsp;and&nbsp;
-                <a @click.stop.prevent="dialogPrivacy = true">Privacy Policy</a>
+                <a
+                  @click.stop.prevent="dialogPrivacy = true"
+                >Privacy Policy</a>
               </template>
             </v-checkbox>
-            <vue-recaptcha
-              ref="recaptcha"
-              :sitekey="recaptchaSitekey"
-              @verify="onRecaptchaVerify"
-            ></vue-recaptcha>
+            <vue-recaptcha ref="recaptcha" :sitekey="recaptchaSitekey" @verify="onRecaptchaVerify"></vue-recaptcha>
           </div>
         </v-form>
       </v-card-text>
       <v-card-actions class="my-2">
         <v-spacer></v-spacer>
-        <v-btn
-          flat
-          large
-          @click.native="onCancel"
-        >
-          Cancel
-        </v-btn>
-        <v-btn
-          flat
-          large
-          color="primary"
-          @click.native="onSubmit"
-        >
-          Submit
-        </v-btn>
+        <!-- <v-btn @click.native="$auth.loginWith('facebook')">Facebook</v-btn> -->
+        <v-btn flat large @click.native="onCancel">Cancel</v-btn>
+        <v-btn flat large color="primary" @click.native="onSubmit">Submit</v-btn>
       </v-card-actions>
       <v-card-actions>
         <v-layout wrap>
@@ -99,23 +72,10 @@
               flat
               color="primary"
               @click.native="toggleType('forgotPassword')"
-            >
-              Forgot password?
-            </v-btn>
-            <v-btn
-              flat
-              color="primary"
-              @click.native="toggleType('signup')"
-            >
-              No account?
-            </v-btn>
+            >Forgot password?</v-btn>
+            <v-btn flat color="primary" @click.native="toggleType('signup')">No account?</v-btn>
           </div>
-          <v-btn
-            v-else
-            flat
-            color="primary"
-            @click.native="toggleType('login')"
-          >Have account?</v-btn>
+          <v-btn v-else flat color="primary" @click.native="toggleType('login')">Have account?</v-btn>
         </v-layout>
       </v-card-actions>
     </v-card>
@@ -161,62 +121,80 @@ export default {
       return this.forgotPassword === true
         ? 'Forgot Password'
         : this.signup === true
-          ? 'Sign Up'
-          : 'Log In'
+        ? 'Sign Up'
+        : 'Log In'
     },
-    rules() { return this.$store.state.rules }
+    rules() {
+      return this.$store.state.rules
+    }
   },
   methods: {
     onSubmit() {
       if (this.$refs.form.validate()) {
         if (this.signup && !this.recaptchaVerified) {
-          this.$toast.error(`You must prove you're not a robot!`, { duration: 4000 })
+          this.$toast.error(`You must prove you're not a robot!`, {
+            duration: 4000
+          })
         } else {
           this.$store.commit('toggle', 'loading')
           if (!this.signup && !this.forgotPassword) {
-            this.$auth.loginWith('local', {
-              data: {
-                username: this.email.toLowerCase(),
-                password: this.password
-              }
-            })
+            this.$auth
+              .loginWith('local', {
+                data: {
+                  username: this.email.toLowerCase(),
+                  password: this.password
+                }
+              })
               .then(() => {
                 this.$store.commit('toggle', 'loading')
                 this.$toast.success('Logged in', { duration: 4000 })
               })
               .catch(() => {
                 this.$store.commit('toggle', 'loading')
-                this.$toast.error('Error logging in, please try again', { duration: 4000 })
+                this.$toast.error('Error logging in, please try again', {
+                  duration: 4000
+                })
               })
           } else if (this.signup) {
-            this.$axios.post('/users/newUser', {
-              name: this.name,
-              surname: this.surname,
-              email: this.email.toLowerCase(),
-              password: this.password,
-              gdprApproval: this.gdprApproval
-            })
+            this.$axios
+              .post('/users/newUser', {
+                name: this.name,
+                surname: this.surname,
+                email: this.email.toLowerCase(),
+                password: this.password,
+                gdprApproval: this.gdprApproval
+              })
               .then(() => {
                 this.onCancel()
                 this.$store.commit('toggle', 'loading')
-                this.$toast.success('Success signing up, check your email for validation', { duration: 5000 })
+                this.$toast.success(
+                  'Success signing up, check your email for validation',
+                  { duration: 5000 }
+                )
               })
               .catch(() => {
                 this.$store.commit('toggle', 'loading')
-                this.$toast.error('Error signing up, please try again', { duration: 4000 })
+                this.$toast.error('Error signing up, please try again', {
+                  duration: 4000
+                })
               })
           } else {
-            this.$axios.post('/users/forgot', {
-              email: this.email.toLowerCase()
-            })
+            this.$axios
+              .post('/users/forgot', {
+                email: this.email.toLowerCase()
+              })
               .then(() => {
                 this.onCancel()
                 this.$store.commit('toggle', 'loading')
-                this.$toast.success('Check your email for instructions', { duration: 5000 })
+                this.$toast.success('Check your email for instructions', {
+                  duration: 5000
+                })
               })
               .catch(() => {
                 this.$store.commit('toggle', 'loading')
-                this.$toast.error('Error sending email, please try again', { duration: 4000 })
+                this.$toast.error('Error sending email, please try again', {
+                  duration: 4000
+                })
               })
           }
         }

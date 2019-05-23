@@ -14,7 +14,7 @@ const router = express.Router()
 // Nodemailer transport
 const smtpTransport = nodemailer.createTransport({
   host: 'smtp.office365.com',
-  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'HANrjyNiBfvHR7th' }
+  auth: { user: 'no-reply.beerjournal@outlook.com', pass: 'ckx3Ep1ACXvRneW' }
 })
 
 // sort breweries
@@ -42,14 +42,14 @@ router.post('/', async (req, res) => {
     // if (checkBeer) return res.status(404).send(checkBeer)
     if (payload.tempBrewery) {
       newBrewery = await new Brewery({ name: payload.brewery })
-      await newBrewery.save((err) => {
+      await newBrewery.save(err => {
         if (err) return res.status(400).send(err)
       })
       payload.brewery = newBrewery._id
     }
 
     const beer = await new Beer(payload)
-    await beer.save((err) => {
+    await beer.save(err => {
       if (err) return res.status(400).send(err)
     })
 
@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
           `Brewery ID: ${beer.brewery._id} \n\n` +
           `Temp Brewery: ${beer.tempBrewery}`
       }
-      smtpTransport.sendMail(mailOptions, (err) => {
+      smtpTransport.sendMail(mailOptions, err => {
         if (err) return { err: 412 }
       })
     }
@@ -91,7 +91,9 @@ router.post('/', async (req, res) => {
 router.get('/tempBeers', async (req, res) => {
   try {
     const tempBeers = await Beer.find({ tempBeer: true })
-      .select('_id beerName brewery style degrees abv logo tempBeer description')
+      .select(
+        '_id beerName brewery style degrees abv logo tempBeer description'
+      )
       .populate('brewery')
     if (!tempBeers) return res.status(404).send()
 
@@ -105,10 +107,11 @@ router.get('/tempBeers', async (req, res) => {
 router.get('/allBeers', async (req, res) => {
   try {
     const beers = await Beer.find({ tempBeer: false })
-      .select('_id beerName brewery style degrees abv logo description averagePrice averageRating totalNumberOfRatings')
+      .select(
+        '_id beerName brewery style degrees abv logo description averagePrice averageRating totalNumberOfRatings'
+      )
       .populate('brewery')
-    const breweries = await Brewery.find()
-      .select('-__v -sumOfAllBeerRatings')
+    const breweries = await Brewery.find().select('-__v -sumOfAllBeerRatings')
     if (!beers || !breweries) return res.status(404).send()
 
     res.status(200).send({ beers, breweries })
@@ -121,7 +124,9 @@ router.get('/allBeers', async (req, res) => {
 router.patch('/:id', async (req, res) => {
   try {
     const beer = await Beer.findByIdAndUpdate(
-      req.params.id, { $set: req.body }, { new: true }
+      req.params.id,
+      { $set: req.body },
+      { new: true }
     )
     if (!beer) return res.status(404).send()
 
