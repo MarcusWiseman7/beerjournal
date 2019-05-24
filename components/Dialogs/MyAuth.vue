@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="dialog" max-width="450" :fullscreen="$vuetify.breakpoint.xsOnly" persistent>
+  <v-dialog
+    v-model="dialog"
+    max-width="450"
+    :fullscreen="$vuetify.breakpoint.xsOnly"
+    persistent
+  >
     <template v-slot:activator="{ on }">
       <v-btn color="accent" v-on="on">Login/Sign up</v-btn>
     </template>
@@ -44,7 +49,12 @@
             @keyup.enter="onSubmit"
           ></v-text-field>
           <div v-if="signup">
-            <v-checkbox v-model="gdprApproval" :rules="[rules.required]" color="primary" required>
+            <v-checkbox
+              v-model="gdprApproval"
+              :rules="[rules.required]"
+              color="primary"
+              required
+            >
               <template slot="label">
                 I agree to the&nbsp;
                 <a @click.stop.prevent="dialogTerms = true">Terms of Service</a>
@@ -62,7 +72,14 @@
         <v-spacer></v-spacer>
         <!-- <v-btn @click.native="$auth.loginWith('facebook')">Facebook</v-btn> -->
         <v-btn flat large @click.native="onCancel">Cancel</v-btn>
-        <v-btn flat large color="primary" @click.native="onSubmit">Submit</v-btn>
+        <v-btn
+          flat
+          large
+          color="primary"
+          @click.native="onSubmit"
+        >
+          Submit
+        </v-btn>
       </v-card-actions>
       <v-card-actions>
         <v-layout wrap>
@@ -75,7 +92,14 @@
             >Forgot password?</v-btn>
             <v-btn flat color="primary" @click.native="toggleType('signup')">No account?</v-btn>
           </div>
-          <v-btn v-else flat color="primary" @click.native="toggleType('login')">Have account?</v-btn>
+          <v-btn
+            v-else
+            flat
+            color="primary"
+            @click.native="toggleType('login')"
+          >
+            Have account?
+          </v-btn>
         </v-layout>
       </v-card-actions>
     </v-card>
@@ -121,8 +145,8 @@ export default {
       return this.forgotPassword === true
         ? 'Forgot Password'
         : this.signup === true
-        ? 'Sign Up'
-        : 'Log In'
+          ? 'Sign Up'
+          : 'Log In'
     },
     rules() {
       return this.$store.state.rules
@@ -180,7 +204,7 @@ export default {
               })
           } else {
             this.$axios
-              .post('/users/forgot', {
+              .patch('/users/forgot', {
                 email: this.email.toLowerCase()
               })
               .then(() => {
