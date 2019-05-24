@@ -137,7 +137,7 @@ export default {
       gdprApproval: false,
       show: false,
       recaptchaSitekey: '6LfRuJ8UAAAAADWaP0qEKDqwpoLtvqJDHN9-LNRB',
-      recaptchaVerified: false
+      recaptchaVerified: true
     }
   },
   computed: {

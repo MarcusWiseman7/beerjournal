@@ -6,15 +6,12 @@
     persistent
   >
     <v-card>
-      <beer-banner />
+      <beer-banner/>
       <v-card-title>
         <h1>Change Password</h1>
       </v-card-title>
       <v-card-text>
-        <v-form
-          ref="form"
-          lazy-validation
-        >
+        <v-form ref="form" lazy-validation>
           <v-text-field
             v-model.trim="currentPassword"
             :append-icon="show ? 'visibility' : 'visibility_off'"
@@ -24,8 +21,7 @@
             required
             autofocus
             @click:append="show = !show"
-          >
-          </v-text-field>
+          ></v-text-field>
           <v-text-field
             v-model.trim="password"
             :append-icon="show1 ? 'visibility' : 'visibility_off'"
@@ -34,17 +30,13 @@
             :type="show1 ? 'text' : 'password'"
             required
             @click:append="show1 = !show1"
-          >
-          </v-text-field>
+          ></v-text-field>
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn @click.native="$store.commit('toggle', 'changePasswordDialog')">Cancel</v-btn>
-        <v-btn
-          color="primary"
-          @click.native="onSubmit()"
-        >Confirm</v-btn>
+        <v-btn color="primary" @click.native="onSubmit()">Confirm</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -62,16 +54,20 @@ export default {
     }
   },
   computed: {
-    rules() { return this.$store.state.rules }
+    rules() {
+      return this.$store.state.rules
+    }
   },
   methods: {
     onSubmit() {
       if (this.$refs.form.validate()) {
         this.$store.commit('toggle', 'loading')
-        this.$axios.patch('/users/changePassword', {
-          currentPassword: this.currentPassword,
-          newPassword: this.password
-        })
+        this.$axios
+          .patch('/users/changePassword', {
+            currentPassword: this.currentPassword,
+            newPassword: this.password,
+            id: this.$store.state.auth.user._id
+          })
           .then(() => {
             this.$store.commit('toggle', 'loading')
             this.$store.commit('toggle', 'changePasswordDialog')
@@ -79,7 +75,9 @@ export default {
           })
           .catch(() => {
             this.$store.commit('toggle', 'loading')
-            this.$toast.error('Error changing password, please try again', { duration: 4000 })
+            this.$toast.error('Error changing password, please try again', {
+              duration: 4000
+            })
           })
       }
     }
