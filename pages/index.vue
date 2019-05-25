@@ -16,9 +16,9 @@
       <edit-profile-dialog />
       <change-password-dialog />
       <!-- <add-beer-dialog v-if="me" />
-      <add-brewery-dialog v-if="me" /> -->
+      <add-brewery-dialog v-if="me" />-->
       <beer-review-dialog :key="$store.state.counter2" />
-      <!-- <edit-beer-dialog v-if="me" /> -->
+      <edit-beer-dialog v-if="me" />
       <v-btn
         fab
         color="primary"
@@ -54,7 +54,7 @@ import EditProfileDialog from '~/components/Dialogs/EditProfileDialog'
 import ChangePasswordDialog from '~/components/Dialogs/ChangePasswordDialog'
 import BeerTable from '~/components/Views/BeerTable'
 import BeerReviewDialog from '~/components/Dialogs/BeerReviewDialog'
-// import EditBeerDialog from '~/components/Dialogs/EditBeerDialog'
+import EditBeerDialog from '~/components/Dialogs/EditBeerDialog'
 // import AddBreweryDialog from '~/components/Dialogs/AddBreweryDialog'
 
 export default {
@@ -65,8 +65,8 @@ export default {
     EditProfileDialog,
     ChangePasswordDialog,
     BeerTable,
-    BeerReviewDialog
-    // EditBeerDialog,
+    BeerReviewDialog,
+    EditBeerDialog
     // AddBreweryDialog
   },
   computed: {
@@ -74,7 +74,11 @@ export default {
       const id = this.$store.state.auth.loggedIn
         ? this.$store.state.auth.user._id
         : ''
-      return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9'
+      return (
+        id === '5caf07e843926a0f4899ce31' ||
+        id === '5cb4e10a80b6f075eefbf3e9' ||
+        id === '5ce7eeb60d382008a815c8e1'
+      )
     }
   },
   methods: {

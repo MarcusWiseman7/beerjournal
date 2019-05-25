@@ -27,7 +27,7 @@
       >
         <tr @click="$store.dispatch('beerInfo', props.item)">
           <td class="my-row-item">{{ props.item.brewery.name }}</td>
-          <td class="my-row-item-beer"><span>{{ props.item.beerName }}</span></td>
+          <td class="my-row-item-beer">{{ props.item.beerName }}</td>
           <td
             v-if="props.item.averageRating !== 0"
             class="my-row-item-rating"
@@ -128,18 +128,14 @@ export default {
   },
   methods: {
     editBeer(beer) {
-      this.$store.commit('setSelectBeer', beer)
       this.$store.commit('toggle', 'editBeerDialog')
+      this.$store.dispatch('beerInfo', beer)
     }
   }
 }
 </script>
 
 <style scoped>
-span {
-  color: #ffa000;
-}
-
 .my-row-item {
   max-width: 30vw;
   overflow-wrap: break-word;
@@ -147,6 +143,7 @@ span {
 
 .my-row-item-beer {
   max-width: 40vw;
+  color: #ffa000;
   overflow-wrap: break-word;
 }
 

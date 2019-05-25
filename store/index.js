@@ -74,8 +74,10 @@ export const actions = {
       }
 
       commit('setBeerInfo', { beer, reviews, myReview })
-      commit('toggle', 'beerInfoView')
-      commit('truthy', { item: 'beerReviewDialog', bool: true })
+      if (!state.editBeerDialog) {
+        commit('toggle', 'beerInfoView')
+        commit('truthy', { item: 'beerReviewDialog', bool: true })
+      }
     }
   }
 }

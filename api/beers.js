@@ -92,7 +92,7 @@ router.get('/tempBeers', async (req, res) => {
   try {
     const tempBeers = await Beer.find({ tempBeer: true })
       .select(
-        '_id beerName brewery style degrees abv logo tempBeer description'
+        '_id beerName brewery style degrees abv logo tempBeer tempBrewery description'
       )
       .populate('brewery')
     if (!tempBeers) return res.status(404).send()

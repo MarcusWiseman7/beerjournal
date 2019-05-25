@@ -67,7 +67,7 @@ export default {
       const id = this.$store.state.auth.loggedIn
         ? this.$store.state.auth.user._id
         : ''
-      return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9'
+      return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9' || id === '5ce7eeb60d382008a815c8e1'
     },
     user() {
       return this.$store.state.auth.user
