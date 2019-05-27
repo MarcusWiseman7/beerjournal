@@ -6,10 +6,13 @@
     persistent
   >
     <template v-slot:activator="{ on }">
-      <v-btn color="accent" v-on="on">Login/Sign up</v-btn>
+      <v-btn
+        color="accent"
+        v-on="on"
+      >Login/Sign up</v-btn>
     </template>
     <v-card>
-      <beer-banner/>
+      <beer-banner />
       <v-card-title>
         <h1>{{ title }}</h1>
       </v-card-title>
@@ -59,19 +62,25 @@
                 I agree to the&nbsp;
                 <a @click.stop.prevent="dialogTerms = true">Terms of Service</a>
                 &nbsp;and&nbsp;
-                <a
-                  @click.stop.prevent="dialogPrivacy = true"
-                >Privacy Policy</a>
+                <a @click.stop.prevent="dialogPrivacy = true">Privacy Policy</a>
               </template>
             </v-checkbox>
-            <vue-recaptcha ref="recaptcha" :sitekey="recaptchaSitekey" @verify="onRecaptchaVerify"></vue-recaptcha>
+            <vue-recaptcha
+              ref="recaptcha"
+              :sitekey="recaptchaSitekey"
+              @verify="onRecaptchaVerify"
+            ></vue-recaptcha>
           </div>
         </v-form>
       </v-card-text>
       <v-card-actions class="my-2">
         <v-spacer></v-spacer>
-        <!-- <v-btn @click.native="$auth.loginWith('facebook')">Facebook</v-btn> -->
-        <v-btn flat large @click.native="onCancel">Cancel</v-btn>
+        <!-- <v-btn @click.native="facebook()">Facebook</v-btn> -->
+        <v-btn
+          flat
+          large
+          @click.native="onCancel"
+        >Cancel</v-btn>
         <v-btn
           flat
           large
@@ -90,7 +99,11 @@
               color="primary"
               @click.native="toggleType('forgotPassword')"
             >Forgot password?</v-btn>
-            <v-btn flat color="primary" @click.native="toggleType('signup')">No account?</v-btn>
+            <v-btn
+              flat
+              color="primary"
+              @click.native="toggleType('signup')"
+            >No account?</v-btn>
           </div>
           <v-btn
             v-else
@@ -137,7 +150,7 @@ export default {
       gdprApproval: false,
       show: false,
       recaptchaSitekey: '6LfRuJ8UAAAAADWaP0qEKDqwpoLtvqJDHN9-LNRB',
-      recaptchaVerified: true
+      recaptchaVerified: false
     }
   },
   computed: {
@@ -153,7 +166,14 @@ export default {
     }
   },
   methods: {
-    onSubmit() {
+    // async facebook() {
+    //   await this.$auth.loginWith('facebook')
+    //     // eslint-disable-next-line no-console
+    //     .then(res => console.log(res))
+    //     // eslint-disable-next-line no-console
+    //     .catch(err => console.error(err))
+    // },
+    async onSubmit() {
       if (this.$refs.form.validate()) {
         if (this.signup && !this.recaptchaVerified) {
           this.$toast.error(`You must prove you're not a robot!`, {
@@ -162,13 +182,12 @@ export default {
         } else {
           this.$store.commit('toggle', 'loading')
           if (!this.signup && !this.forgotPassword) {
-            this.$auth
-              .loginWith('local', {
-                data: {
-                  username: this.email.toLowerCase(),
-                  password: this.password
-                }
-              })
+            await this.$auth.loginWith('local', {
+              data: {
+                username: this.email.toLowerCase(),
+                password: this.password
+              }
+            })
               .then(() => {
                 this.$store.commit('toggle', 'loading')
                 this.$toast.success('Logged in', { duration: 4000 })
@@ -180,14 +199,13 @@ export default {
                 })
               })
           } else if (this.signup) {
-            this.$axios
-              .post('/users/newUser', {
-                name: this.name,
-                surname: this.surname,
-                email: this.email.toLowerCase(),
-                password: this.password,
-                gdprApproval: this.gdprApproval
-              })
+            await this.$axios.post('/users/newUser', {
+              name: this.name,
+              surname: this.surname,
+              email: this.email.toLowerCase(),
+              password: this.password,
+              gdprApproval: this.gdprApproval
+            })
               .then(() => {
                 this.onCancel()
                 this.$store.commit('toggle', 'loading')
@@ -203,10 +221,9 @@ export default {
                 })
               })
           } else {
-            this.$axios
-              .patch('/users/forgot', {
-                email: this.email.toLowerCase()
-              })
+            await this.$axios.patch('/users/forgot', {
+              email: this.email.toLowerCase()
+            })
               .then(() => {
                 this.onCancel()
                 this.$store.commit('toggle', 'loading')

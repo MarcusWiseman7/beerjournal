@@ -28,7 +28,7 @@ module.exports = {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: { color: '#ffa000', height: '4px' },
 
   /*
    ** Global CSS
@@ -84,7 +84,7 @@ module.exports = {
       },
       facebook: {
         client_id: '2276566119272505',
-        userinfo_endpoint: 'https://graph.facebook.com/v2.12/me?fields=about,name,picture{url},email,birthday',
+        userinfo_endpoint: 'https://graph.facebook.com/v2.12/me?fields=about,name,picture{url},email',
         scope: ['public_profile', 'email']
       }
     }
