@@ -214,8 +214,9 @@ export default {
                   { duration: 5000 }
                 )
               })
-              .catch(() => {
+              .catch((res) => {
                 this.$store.commit('toggle', 'loading')
+                console.log('res.data :', res.data);
                 this.$toast.error('Error signing up, please try again', {
                   duration: 4000
                 })
