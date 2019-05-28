@@ -136,8 +136,6 @@ router.patch('/reset/:token', async (req, res) => {
 
 // Create new user
 router.post('/newUser', async (req, res) => {
-  let user = null
-  let info = null
   try {
     const email = req.body.email
     const name = req.body.name
@@ -149,21 +147,21 @@ router.post('/newUser', async (req, res) => {
     const checkUserEmail = await User.findOne({ email })
     if (checkUserEmail) return res.status(404).send()
 
-    user = await new User({
+    const user = await new User({
       name,
       surname,
       verifyEmail: email,
       password,
       gdprApproval
-    })
-    await user.save()
+    }).save()
+    if (!user) return res.status(403).send()
 
-    info = await verifyUserEmail({ url, name, surname, email })
+    const info = await verifyUserEmail({ url, name, surname, email })
     if (info.err) return res.status(info.err).send()
 
     return res.status(200).send()
   } catch (err) {
-    return res.status(400).send({ err, user, info })
+    return res.status(400).send(err)
   }
 })
 

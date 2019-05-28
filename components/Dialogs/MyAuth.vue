@@ -75,7 +75,6 @@
       </v-card-text>
       <v-card-actions class="my-2">
         <v-spacer></v-spacer>
-        <!-- <v-btn @click.native="facebook()">Facebook</v-btn> -->
         <v-btn
           flat
           large
@@ -166,13 +165,6 @@ export default {
     }
   },
   methods: {
-    // async facebook() {
-    //   await this.$auth.loginWith('facebook')
-    //     // eslint-disable-next-line no-console
-    //     .then(res => console.log(res))
-    //     // eslint-disable-next-line no-console
-    //     .catch(err => console.error(err))
-    // },
     async onSubmit() {
       if (this.$refs.form.validate()) {
         if (this.signup && !this.recaptchaVerified) {
@@ -214,10 +206,8 @@ export default {
                   { duration: 5000 }
                 )
               })
-              .catch((res) => {
+              .catch(() => {
                 this.$store.commit('toggle', 'loading')
-                // eslint-disable-next-line no-console
-                console.log('res :', res)
                 this.$toast.error('Error signing up, please try again', {
                   duration: 4000
                 })
