@@ -155,7 +155,7 @@ router.post('/newUser', async (req, res) => {
       gdprApproval
     })
     await user.save()
-
+    console.log('user after save :', user)
     const info = await verifyUserEmail({ url, name, surname, email })
     if (info.err) return res.status(info.err).send()
 
