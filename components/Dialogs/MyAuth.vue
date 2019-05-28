@@ -217,7 +217,7 @@ export default {
               .catch((res) => {
                 this.$store.commit('toggle', 'loading')
                 // eslint-disable-next-line no-console
-                console.log('res.data :', res.data)
+                console.log('res :', res)
                 this.$toast.error('Error signing up, please try again', {
                   duration: 4000
                 })
