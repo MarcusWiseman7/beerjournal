@@ -5,6 +5,8 @@ export const state = () => ({
   counter: 0,
   counter1: 10000,
   counter2: 100000,
+  breweryInfo: {},
+  breweryInfoDialog: false,
   beerInfo: { beer: {}, reviews: [], myReview: {} },
   myAuth: false,
   beerInfoView: false,
@@ -37,12 +39,14 @@ export const mutations = {
   incCounter2(state) { state.counter2++ },
   setItem(state, item) { state[item] = item },
   setBeerInfo(state, info) { state.beerInfo = info },
+  setBreweryInfo(state, info) { state.breweryInfo = info },
   setBreweries(state, breweries) { state.breweries = breweries },
   setBeers(state, beers) { state.beers = beers },
   setMyReview(state, review) { state.beerInfo.myReview = Object.assign({}, state.beerInfo.myReview, review) },
   setBeer(state, beer) { state.beerInfo.beer = Object.assign({}, state.beerInfo.beer, beer) },
   setReviews(state, reviews) { state.beerInfo.reviews = reviews },
   resetBeerInfo(state) { state.beerInfo = { beer: {}, reviews: [], myReview: {} } },
+  resetBreweryInfo(state) { state.breweryInfo = {} },
   toggle(state, item) { state[item] = !state[item] },
   truthy(state, params) { state[params.item] = params.bool }
 }

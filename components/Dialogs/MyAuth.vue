@@ -75,7 +75,6 @@
           @click.native="onCancel()"
         >Cancel</v-btn>
         <v-btn
-          flat
           large
           color="primary"
           @click.native="onSubmit()"

@@ -26,7 +26,7 @@
             empty-icon="fa fa-beer"
           ></v-rating>
         </v-layout>
-        <h3 class="mb-5">.5L Price (CZK)</h3>
+        <!-- <h3 class="mb-5">.5L Price (CZK)</h3>
         <v-slider
           v-model="price"
           always-dirty
@@ -40,7 +40,7 @@
           <template v-slot:append>
             <v-icon @click.native="increment()">add</v-icon>
           </template>
-        </v-slider>
+        </v-slider> -->
         <v-text-field
           v-model.trim="location"
           label="Location"
@@ -117,10 +117,10 @@ export default {
       set(rating) { this.$store.commit('setMyReview', { rating }) },
       get() { return this.beerInfo.myReview.rating }
     },
-    price: {
-      set(price) { this.$store.commit('setMyReview', { price }) },
-      get() { return this.beerInfo.myReview.price }
-    },
+    // price: {
+    //   set(price) { this.$store.commit('setMyReview', { price }) },
+    //   get() { return this.beerInfo.myReview.price }
+    // },
     location: {
       set(location) { this.$store.commit('setMyReview', { location }) },
       get() { return this.beerInfo.myReview.location }
@@ -143,7 +143,7 @@ export default {
       if (this.$refs.form.validate()) {
         this.$store.commit('toggle', 'loading')
         const body = {
-          price: this.price,
+          // price: this.price,
           location: this.location,
           rating: this.rating,
           notes: this.notes,

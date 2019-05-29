@@ -30,10 +30,13 @@
           column
         >
           <v-layout wrap>
-            <h1
+            <a
               v-if="beer.brewery"
               class="mr-2"
-            >{{ beer.brewery.name }}</h1>
+              @click="openBreweryInfo()"
+            >
+              <h1>{{ beer.brewery.name }}</h1>
+            </a>
             <h1>{{ beer.beerName }}</h1>
           </v-layout>
           <h2>{{ beer.style }}</h2>
@@ -73,7 +76,8 @@
       >
         <h2 class="my-box">{{ beer.totalNumberOfRatings }} reviews</h2>
         <v-divider vertical></v-divider>
-        <h2 class="my-box">~ {{ beer.averagePrice }} czk</h2>
+        <h2 class="my-box"></h2>
+        <!-- <h2 class="my-box">~ {{ beer.averagePrice }} czk</h2> -->
       </v-layout>
       <v-layout
         v-if="beer.description"
@@ -153,6 +157,11 @@ export default {
       this.$store.commit('toggle', 'beerReviewDialog')
       this.$store.commit('resetBeerInfo')
       this.$store.commit('truthy', { item: 'reviewForm', bool: false })
+    },
+    openBreweryInfo() {
+      this.$store.commit('setBreweryInfo', this.beer.brewery)
+      this.onClose()
+      this.$store.commit('toggle', 'breweryInfoDialog')
     }
   }
 }

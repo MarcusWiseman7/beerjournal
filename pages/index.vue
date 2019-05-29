@@ -45,6 +45,7 @@
         <v-icon large>account_box</v-icon>
       </v-btn>
     </div>
+    <brewery-info-dialog />
     <beer-review-dialog :key="$store.state.counter2" />
     <beer-table
       :key="$store.state.counter1"
@@ -70,6 +71,7 @@ import EditProfileDialog from '~/components/Dialogs/EditProfileDialog'
 import ChangePasswordDialog from '~/components/Dialogs/ChangePasswordDialog'
 import BeerTable from '~/components/Views/BeerTable'
 import BeerReviewDialog from '~/components/Dialogs/BeerReviewDialog'
+import BreweryInfoDialog from '~/components/Dialogs/BreweryInfoDialog'
 import EditBeerDialog from '~/components/Dialogs/EditBeerDialog'
 // import AddBreweryDialog from '~/components/Dialogs/AddBreweryDialog'
 import MyAuth from '~/components/Dialogs/MyAuth'
@@ -83,6 +85,7 @@ export default {
     ChangePasswordDialog,
     BeerTable,
     BeerReviewDialog,
+    BreweryInfoDialog,
     EditBeerDialog,
     MyAuth
     // AddBreweryDialog
@@ -93,7 +96,6 @@ export default {
         ? this.$store.state.auth.user._id
         : ''
       return (
-        id === '5caf07e843926a0f4899ce31' ||
         id === '5cb4e10a80b6f075eefbf3e9' ||
         id === '5ce7eeb60d382008a815c8e1'
       )
