@@ -60,7 +60,7 @@
             ></v-rating>
             <h3 class="ml-2">({{ brewery.averageRating }})</h3>
           </v-layout>
-          <p class="brewery-desc">{{ brewery.description }}</p>
+          <p class="my-4 brewery-desc">{{ brewery.description }}</p>
           <v-layout
             v-if="beers.length"
             column
@@ -71,7 +71,7 @@
               :key="i"
               justify-center
               align-center
-              class="my-2"
+              class="my-3"
             >
               <a @click="openBeerInfo(beer)">
                 <h2 class="my-box">{{ beer.beerName }}</h2>
@@ -128,5 +128,9 @@ export default {
   max-width: 40vw;
   text-align: center;
   overflow-wrap: break-word;
+}
+
+.brewery-desc {
+  text-align: justify;
 }
 </style>

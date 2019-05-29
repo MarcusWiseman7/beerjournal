@@ -29,17 +29,15 @@
           wrap
           column
         >
-          <v-layout wrap>
-            <a
-              v-if="beer.brewery"
-              class="mr-2"
-              @click="openBreweryInfo()"
-            >
-              <h1>{{ beer.brewery.name }}</h1>
-            </a>
-            <h1>{{ beer.beerName }}</h1>
-          </v-layout>
-          <h2>{{ beer.style }}</h2>
+          <a
+            v-if="beer.brewery"
+            class="mr-2"
+            @click="openBreweryInfo()"
+          >
+            <h1>{{ beer.brewery.name }}</h1>
+          </a>
+          <h2 class="beer-name">{{ beer.beerName }}</h2>
+          <h3>{{ beer.style }}</h3>
         </v-layout>
       </v-layout>
     </v-card-title>
@@ -177,6 +175,11 @@ export default {
   font-style: italic;
   margin-left: 20px;
   letter-spacing: 1.75px;
-  line-height: 2rem;
+  line-height: 2;
+}
+
+.beer-name {
+  font-size: 2em;
+  line-height: 1;
 }
 </style>
