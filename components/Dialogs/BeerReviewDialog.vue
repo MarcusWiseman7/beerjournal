@@ -8,7 +8,7 @@
     <v-card>
       <beer-banner />
       <beer-info v-if="$store.state.beerInfoView" />
-      <div>
+      <div v-if="$store.state.auth.loggedIn">
         <beer-form v-show="!$store.state.beerInfo.beer._id"></beer-form>
         <review-form v-show="$store.state.reviewForm"></review-form>
       </div>
@@ -22,7 +22,7 @@ import ReviewForm from '~/components/Views/ReviewForm'
 import BeerInfo from '~/components/Views/BeerInfo'
 
 export default {
-  name: 'BeerReview',
+  name: 'BeerReviewDialog',
   components: {
     BeerForm,
     ReviewForm,

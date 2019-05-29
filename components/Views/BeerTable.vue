@@ -38,16 +38,6 @@
           >-</td>
         </tr>
       </template>
-      <!-- <template
-        v-else-if="title === 'My Beers'"
-        v-slot:items="props"
-      >
-        <tr @click="beerInfo(props.item)">
-          <td class="my-row-item">{{ props.item.brewery.name }}</td>
-          <td class="my-row-item-beer"><span>{{ props.item.beerName }}</span></td>
-          <td class="my-row-item-rating">{{ props.item.rating }}</td>
-        </tr>
-      </template> -->
       <template
         v-else
         v-slot:items="props"
@@ -98,23 +88,6 @@ export default {
           { text: 'Beer', value: 'beerName' },
           { text: 'Info', value: 'degrees' }
         ]
-      // return this.title === 'Beers'
-      //   ? [
-      //     { text: 'Brewery', value: 'brewery.name' },
-      //     { text: 'Beer', value: 'beerName' },
-      //     { text: 'Average', value: 'averageRating' }
-      //   ]
-      //   : this.title === 'My Beers'
-      //     ? [
-      //       { text: 'Brewery', value: 'brewery.name' },
-      //       { text: 'Beer', value: 'beerName' },
-      //       { text: 'Rating', value: 'rating' }
-      //     ]
-      //     : [
-      //       { text: 'Brewery', value: 'brewery.name' },
-      //       { text: 'Beer', value: 'beerName' },
-      //       { text: 'Info', value: 'degrees' }
-      //     ]
     }
   },
   async created() {

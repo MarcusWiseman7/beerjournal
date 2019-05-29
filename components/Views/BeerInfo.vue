@@ -92,7 +92,7 @@
       >close</v-btn>
       <v-btn
         color="primary"
-        @click.native="$store.commit('toggle', 'reviewForm')"
+        @click.native="onNotes()"
       >Notes</v-btn>
     </v-card-actions>
     <v-card-text v-if="!$store.state.reviewForm">
@@ -138,6 +138,16 @@ export default {
     }
   },
   methods: {
+    onNotes() {
+      if (this.$store.state.auth.loggedIn) {
+        this.$store.commit('toggle', 'reviewForm')
+      } else {
+        this.$store.commit('truthy', { item: 'beerReviewDialog', bool: false })
+        this.$store.commit('truthy', { item: 'beerInfoView', bool: false })
+        this.$store.commit('resetBeerInfo')
+        this.$store.commit('toggle', 'myAuth')
+      }
+    },
     onClose() {
       this.$store.commit('toggle', 'beerInfoView')
       this.$store.commit('toggle', 'beerReviewDialog')

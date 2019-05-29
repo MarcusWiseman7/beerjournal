@@ -2,9 +2,6 @@
   <div>
     <v-toolbar height="180">
       <v-container>
-        <v-layout justify-end>
-          <my-auth v-if="!isAdmin" />
-        </v-layout>
         <v-layout
           align-center
           wrap
@@ -12,7 +9,7 @@
           <h1 class="mr-2">BeerJournal</h1>
           <v-icon large>fa fa-beer</v-icon>
           <v-spacer></v-spacer>
-          <div v-if="isAdmin">
+          <div v-if="$store.state.auth.loggedIn">
             <v-menu offset-y>
               <template v-slot:activator="{ on }">
                 <v-avatar
@@ -20,7 +17,7 @@
                   color="primary"
                   v-on="on"
                 >
-                  <v-icon large>{{ user.userIcon }}</v-icon>
+                  <v-icon large>{{ $store.state.auth.user.userIcon }}</v-icon>
                 </v-avatar>
               </template>
               <v-list>
@@ -52,34 +49,20 @@
 </template>
 
 <script>
-import MyAuth from '~/components/Dialogs/MyAuth'
-
 export default {
   name: 'MyHeader',
-  components: {
-    MyAuth
-  },
   computed: {
-    isAdmin() {
-      return this.$store.state.auth.loggedIn
-    },
     me() {
       const id = this.$store.state.auth.loggedIn
         ? this.$store.state.auth.user._id
         : ''
       return id === '5caf07e843926a0f4899ce31' || id === '5cb4e10a80b6f075eefbf3e9' || id === '5ce7eeb60d382008a815c8e1'
-    },
-    user() {
-      return this.$store.state.auth.user
     }
   },
   methods: {
     onLogout() {
       this.$store.commit('toggle', 'loading')
-      this.$auth
-        .logout({
-          data: { id: this.$store.state.auth.user._id }
-        })
+      this.$auth.logout({ data: { id: this.$store.state.auth.user._id } })
         .then(() => {
           this.$store.commit('toggle', 'loading')
         })

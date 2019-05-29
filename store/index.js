@@ -6,6 +6,7 @@ export const state = () => ({
   counter1: 10000,
   counter2: 100000,
   beerInfo: { beer: {}, reviews: [], myReview: {} },
+  myAuth: false,
   beerInfoView: false,
   myBeerList: false,
   tempBeersList: false,
@@ -58,26 +59,24 @@ export const actions = {
     commit('incCounter1')
   },
   async beerInfo({ commit, state }, beer) {
+    const reviews = await this.$axios.get(`/reviews/${beer._id}`)
+      .then(res => res.data)
+      .catch(() => [])
+    let myReview = {}
+
     if (state.auth.loggedIn) {
       const myId = state.auth.user._id
-      const reviews = await this.$axios.get(`/reviews/${beer._id}`)
-        .then(res => res.data)
-        // eslint-disable-next-line no-console
-        .catch(err => console.error(err))
-      let myReview
 
       if (reviews.map(x => x.reviewer._id).includes(myId)) {
         myReview = reviews[reviews.findIndex(x => x.reviewer._id === myId)]
         reviews.splice(reviews.indexOf(myReview), 1)
-      } else {
-        myReview = {}
       }
+    }
 
-      commit('setBeerInfo', { beer, reviews, myReview })
-      if (!state.editBeerDialog) {
-        commit('toggle', 'beerInfoView')
-        commit('truthy', { item: 'beerReviewDialog', bool: true })
-      }
+    commit('setBeerInfo', { beer, reviews, myReview })
+    if (!state.editBeerDialog) {
+      commit('toggle', 'beerInfoView')
+      commit('truthy', { item: 'beerReviewDialog', bool: true })
     }
   }
 }

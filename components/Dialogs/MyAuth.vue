@@ -1,16 +1,10 @@
 <template>
   <v-dialog
-    v-model="dialog"
+    v-model="$store.state.myAuth"
     max-width="450"
     :fullscreen="$vuetify.breakpoint.xsOnly"
     persistent
   >
-    <template v-slot:activator="{ on }">
-      <v-btn
-        color="accent"
-        v-on="on"
-      >Login/Sign up</v-btn>
-    </template>
     <v-card>
       <beer-banner />
       <v-card-title>
@@ -78,13 +72,13 @@
         <v-btn
           flat
           large
-          @click.native="onCancel"
+          @click.native="onCancel()"
         >Cancel</v-btn>
         <v-btn
           flat
           large
           color="primary"
-          @click.native="onSubmit"
+          @click.native="onSubmit()"
         >
           Submit
         </v-btn>
@@ -138,7 +132,6 @@ export default {
   components: { VueRecaptcha },
   data() {
     return {
-      dialog: false,
       signup: false,
       forgetPassword: false,
       name: '',
@@ -181,6 +174,7 @@ export default {
               }
             })
               .then(() => {
+                this.onCancel()
                 this.$store.commit('toggle', 'loading')
                 this.$toast.success('Logged in', { duration: 4000 })
               })
@@ -201,8 +195,7 @@ export default {
               .then(() => {
                 this.onCancel()
                 this.$store.commit('toggle', 'loading')
-                this.$toast.success(
-                  'Success signing up, check your email for validation',
+                this.$toast.success('Success signing up, check your email for validation',
                   { duration: 5000 }
                 )
               })
@@ -234,18 +227,16 @@ export default {
       }
     },
     onCancel() {
-      this.dialog = false
+      this.$store.commit('toggle', 'myAuth')
       this.signup = false
       this.forgotPassword = false
       this.name = ''
       this.surname = ''
       this.email = ''
       this.password = ''
-      this.verifyPassword = ''
       this.forgotPassword = ''
       this.gdprApproval = false
       this.show = false
-      this.show1 = false
       this.recaptchaVerified = false
     },
     toggleType(type) {

@@ -17,7 +17,6 @@
       <change-password-dialog />
       <!-- <add-beer-dialog v-if="me" />
       <add-brewery-dialog v-if="me" />-->
-      <beer-review-dialog :key="$store.state.counter2" />
       <edit-beer-dialog v-if="me" />
       <v-btn
         fab
@@ -30,6 +29,21 @@
         <v-icon>add</v-icon>
       </v-btn>
     </div>
+    <div v-else>
+      <my-auth />
+      <v-btn
+        v-if="!$store.state.myAuth"
+        color="primary"
+        fab
+        fixed
+        bottom
+        left
+        @click.native="$store.commit('toggle', 'myAuth')"
+      >
+        <v-icon large>account_box</v-icon>
+      </v-btn>
+    </div>
+    <beer-review-dialog :key="$store.state.counter2" />
     <beer-table
       :key="$store.state.counter1"
       title="Beers"
@@ -56,6 +70,7 @@ import BeerTable from '~/components/Views/BeerTable'
 import BeerReviewDialog from '~/components/Dialogs/BeerReviewDialog'
 import EditBeerDialog from '~/components/Dialogs/EditBeerDialog'
 // import AddBreweryDialog from '~/components/Dialogs/AddBreweryDialog'
+import MyAuth from '~/components/Dialogs/MyAuth'
 
 export default {
   name: 'Index',
@@ -66,7 +81,8 @@ export default {
     ChangePasswordDialog,
     BeerTable,
     BeerReviewDialog,
-    EditBeerDialog
+    EditBeerDialog,
+    MyAuth
     // AddBreweryDialog
   },
   computed: {

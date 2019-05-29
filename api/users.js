@@ -147,14 +147,8 @@ router.post('/newUser', async (req, res) => {
     const checkUserEmail = await User.findOne({ email })
     if (checkUserEmail) return res.status(404).send()
 
-    const user = await new User({
-      name,
-      surname,
-      verifyEmail: email,
-      password,
-      gdprApproval
-    }).save()
-    if (!user) return res.status(403).send()
+    await new User({ name, surname, verifyEmail: email, password, gdprApproval })
+      .save(err => { if (err) return res.status(400).send(err) })
 
     const info = await verifyUserEmail({ url, name, surname, email })
     if (info.err) return res.status(info.err).send()
