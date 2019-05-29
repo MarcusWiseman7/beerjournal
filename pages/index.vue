@@ -21,6 +21,7 @@
       <v-btn
         fab
         color="primary"
+        large
         fixed
         bottom
         left
@@ -35,6 +36,7 @@
         v-if="!$store.state.myAuth"
         color="primary"
         fab
+        large
         fixed
         bottom
         left
