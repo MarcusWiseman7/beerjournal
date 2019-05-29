@@ -18,7 +18,6 @@
         >
           <v-rating
             v-model="rating"
-            :rules="[rules.required]"
             class="my-3"
             background-color="secondary"
             medium
@@ -26,21 +25,6 @@
             empty-icon="fa fa-beer"
           ></v-rating>
         </v-layout>
-        <!-- <h3 class="mb-5">.5L Price (CZK)</h3>
-        <v-slider
-          v-model="price"
-          always-dirty
-          thumb-label="always"
-          min="0"
-          max="150"
-        >
-          <template v-slot:prepend>
-            <v-icon @click.native="decrement()">remove</v-icon>
-          </template>
-          <template v-slot:append>
-            <v-icon @click.native="increment()">add</v-icon>
-          </template>
-        </v-slider> -->
         <v-text-field
           v-model.trim="location"
           label="Location"
@@ -117,10 +101,6 @@ export default {
       set(rating) { this.$store.commit('setMyReview', { rating }) },
       get() { return this.beerInfo.myReview.rating }
     },
-    // price: {
-    //   set(price) { this.$store.commit('setMyReview', { price }) },
-    //   get() { return this.beerInfo.myReview.price }
-    // },
     location: {
       set(location) { this.$store.commit('setMyReview', { location }) },
       get() { return this.beerInfo.myReview.location }
@@ -131,7 +111,6 @@ export default {
     },
     beer() { return this.beerInfo.beer },
     userId() { return this.$store.state.auth.user._id },
-    rules() { return this.$store.state.rules },
     smallScreen() { return window.screen.availWidth < 360 }
   },
   methods: {
@@ -140,7 +119,9 @@ export default {
       this.$store.commit('incCounter2')
     },
     onSubmit() {
-      if (this.$refs.form.validate()) {
+      if (!this.rating) {
+        this.$toast.error('Rating required', { duration: 4000 })
+      } else {
         this.$store.commit('toggle', 'loading')
         const body = {
           // price: this.price,
