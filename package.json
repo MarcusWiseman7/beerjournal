@@ -1,7 +1,7 @@
 {
   "name": "beerjournal",
   "version": "1.0.0",
-  "description": "Social beer journal built with the MEVN stack",
+  "description": "Social beer journal PWA built with the MEVN stack",
   "author": "Marcus Wiseman",
   "private": true,
   "config": {

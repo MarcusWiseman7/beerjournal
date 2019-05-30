@@ -1,6 +1,7 @@
 # beerjournal
 
-> Social beer journal built with the MEVN stack
+> Social beer journal PWA built with the MEVN stack
+> Vue.js, Nuxt.js, Node.js, Express, MongoDB, Vuetify
 
 ## Build Setup
 
