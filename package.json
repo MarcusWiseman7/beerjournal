@@ -34,7 +34,7 @@
     "express": "^4.16.4",
     "helmet": "^3.16.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.4.20",
+    "mongoose": "^5.7.5",
     "nodemailer": "^6.0.0",
     "nuxt": "^2.6.2",
     "vue-recaptcha": "^1.1.1",
